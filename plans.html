@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNG DATA API - Plans</title>
+    <title>MNG DATA API - ATPAY PLANS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -38,19 +38,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .logo {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #2563eb, #3b82f6);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
         }
 
         .logo-text {
@@ -185,90 +172,37 @@
             font-weight: bold;
             color: #1e3a8a;
             margin-bottom: 20px;
+            text-align: center;
         }
 
-        .plans-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+        .plans-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
         }
 
-        .plan-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border: 2px solid transparent;
-            background-image: linear-gradient(white, white), linear-gradient(135deg, #2563eb, #3b82f6);
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            transition: transform 0.3s ease;
+        .plans-table th {
+            background: #00CED1;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .plans-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .plans-table tr:hover {
+            background: #f1f5f9;
             cursor: pointer;
         }
 
-        .plan-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .plan-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .plan-name {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1e3a8a;
-        }
-
-        .plan-status {
-            font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-weight: 500;
-        }
-
-        .plan-status.active {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .plan-status.inactive {
-            background: #f3f4f6;
-            color: #6b7280;
-        }
-
-        .plan-price {
-            font-size: 24px;
+        .plans-table .amount {
             font-weight: bold;
             color: #2563eb;
-            margin-bottom: 10px;
-        }
-
-        .plan-duration {
-            font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 15px;
-        }
-
-        .plan-features {
-            list-style: none;
-            margin-bottom: 15px;
-        }
-
-        .plan-features li {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: #374151;
-            margin-bottom: 8px;
-        }
-
-        .plan-features li i {
-            color: #10b981;
         }
 
         .empty-state {
@@ -281,6 +215,10 @@
             font-size: 48px;
             margin-bottom: 15px;
             opacity: 0.5;
+        }
+
+        .table-container {
+            overflow-x: auto;
         }
 
         @media (min-width: 1024px) {
@@ -306,8 +244,13 @@
                 padding: 20px 15px;
             }
 
-            .plans-grid {
-                grid-template-columns: 1fr;
+            .plans-section {
+                padding: 20px 15px;
+            }
+
+            .plans-table th,
+            .plans-table td {
+                padding: 10px;
             }
         }
 
@@ -320,24 +263,17 @@
                 font-size: 16px;
             }
 
-            .plans-section {
-                padding: 20px 15px;
-            }
-
-            .plan-card {
-                padding: 15px;
-            }
-
             .section-title {
                 font-size: 20px;
             }
 
-            .plan-name {
-                font-size: 18px;
+            .plans-table {
+                font-size: 12px;
             }
 
-            .plan-price {
-                font-size: 20px;
+            .plans-table th,
+            .plans-table td {
+                padding: 8px;
             }
         }
     </style>
@@ -359,50 +295,55 @@
     
     <div class="sidebar" id="sidebar">
         <nav class="nav-menu">
-            <button class="nav-item" onclick="navigateTo('dashboard')"><i class="fas fa-tachometer-alt"></i> <a href="user.html" style="color: #ffffff; text-decoration: none;">Dashboard</a> </button>
-            <button class="nav-item active" onclick="navigateTo('plans')"><i class="fas fa-gem"></i> <a href="plans.html" style="color: #ffffff; text-decoration: none;"> Plans</a> </button>
-            <button class="nav-item" onclick="navigateTo('transactions')"><i class="fas fa-credit-card"></i> <a href="transactions.html" style="color: #ffffff; text-decoration: none;">Transactions</a> </button>
-            <button class="nav-item" onclick="navigateTo('settings')"><i class="fas fa-cog"></i> <a href="settings.html" style="color: #ffffff; text-decoration: none;">Settings</a> </button>
-            <button class="nav-item" onclick="navigateTo('documentation')"><i class="fas fa-book"></i> <a href="documentation.html" style="color: #ffffff; text-decoration: none;">Documentation</a> </button>
-            <button class="nav-item" onclick="navigateTo('profile')"><i class="fas fa-user"></i> <a href="Profile.html" style="color: #ffffff; text-decoration: none;">Profile</a></button>
+            <button class="nav-item" onclick="navigateTo('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</button>
+            <button class="nav-item active" onclick="navigateTo('plans')"><i class="fas fa-gem"></i> Plans</button>
+            <button class="nav-item" onclick="navigateTo('transactions')"><i class="fas fa-credit-card"></i> Transactions</button>
+            <button class="nav-item" onclick="navigateTo('settings')"><i class="fas fa-cog"></i> Settings</button>
+            <button class="nav-item" onclick="navigateTo('documentation')"><i class="fas fa-book"></i> Documentation</button>
+            <button class="nav-item" onclick="navigateTo('profile')"><i class="fas fa-user"></i> Profile</button>
         </nav>
         <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out"></i> Logout</button>
     </div>
 
     <main class="main-content">
         <div class="plans-section">
-            <h1 class="section-title">Your Plans</h1>
-            <div class="plans-grid" id="plansGrid"></div>
+            <h1 class="section-title">MNG DATA PLANS</h1>
+            <div class="table-container">
+                <table class="plans-table" id="plansTable">
+                    <thead>
+                        <tr>
+                            <th>PlanID</th>
+                            <th>Network</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Size</th>
+                            <th>Validity</th>
+                        </tr>
+                    </thead>
+                    <tbody id="plansBody"></tbody>
+                </table>
+            </div>
         </div>
     </main>
 
     <script>
-        // Static plans data to simulate admin control
+        // Static plans data based on the image, with admin control
         const plans = [
-            {
-                name: "Basic Plan",
-                price: 5000,
-                duration: "30 days",
-                features: ["100 API Calls/Day", "Email Support", "Basic Analytics"],
-                status: "active",
-                enabled: true
-            },
-            {
-                name: "Pro Plan",
-                price: 15000,
-                duration: "90 days",
-                features: ["1000 API Calls/Day", "Priority Support", "Advanced Analytics"],
-                status: "inactive",
-                enabled: true
-            },
-            {
-                name: "Enterprise Plan",
-                price: 50000,
-                duration: "180 days",
-                features: ["Unlimited API Calls", "24/7 Support", "Custom Dashboard"],
-                status: "active",
-                enabled: false // Hidden by admin
-            }
+            { planId: 83, network: "MTN", type: "GIFTING", amount: 720, size: "1GB", validity: "1 Day", enabled: true },
+            { planId: 84, network: "MTN", type: "GIFTING", amount: 2520, size: "3.2GB", validity: "7 Days", enabled: true },
+            { planId: 85, network: "MTN", type: "GIFTING", amount: 3200, size: "10GB", validity: "7 Days", enabled: true },
+            { planId: 86, network: "MTN", type: "GIFTING", amount: 3100, size: "7GB", validity: "7 Days", enabled: true },
+            { planId: 87, network: "MTN", type: "SME", amount: 500, size: "500MB", validity: "30 Days", enabled: true },
+            { planId: 88, network: "MTN", type: "SME", amount: 730, size: "1GB", validity: "30 Days", enabled: true },
+            { planId: 89, network: "MTN", type: "SME", amount: 1542, size: "2GB", validity: "30 Days", enabled: true },
+            { planId: 90, network: "MTN", type: "SME", amount: 2452, size: "3GB", validity: "30 Days", enabled: true },
+            { planId: 91, network: "MTN", type: "SME", amount: 2500, size: "6GB", validity: "30 Days", enabled: true },
+            { planId: 3, network: "Glo", type: "CORPORATE", amount: 122, size: "500MB", validity: "30 Days", enabled: true },
+            { planId: 32, network: "Glo", type: "CORPORATE", amount: 460, size: "1.2GB", validity: "30 Days", enabled: true },
+            { planId: 33, network: "Glo", type: "CORPORATE", amount: 1400, size: "3GB", validity: "30 Days", enabled: true },
+            { planId: 34, network: "Glo", type: "CORPORATE", amount: 1125, size: "5GB", validity: "30 Days", enabled: true },
+            { planId: 35, network: "Glo", type: "CORPORATE", amount: 2250, size: "10GB", validity: "30 Days", enabled: true },
+            { planId: 36, network: "Glo", type: "CORPORATE", amount: 940, size: "2GB", validity: "30 Days", enabled: true }
         ];
 
         function showAlert(message, type = 'success') {
@@ -437,8 +378,7 @@
             }
             
             showAlert(`Navigating to ${page} page...`, 'success');
-            // Uncomment for actual navigation
-            // window.location.href = `${page}.html`;
+            window.location.href = `${page}.html`;
         }
 
         function logout() {
@@ -455,14 +395,17 @@
                     showAlert('Logging out...', 'success');
                     setTimeout(() => {
                         showAlert('You have been logged out successfully', 'success');
-                         window.location.href = 'index.html';
+                        window.location.href = 'index.html';
                     }, 1500);
                 }
             });
         }
 
-        function viewPlan(planName) {
-            showAlert(`Viewing plan: ${planName}`, 'success');
+        function viewPlan(planId) {
+            const plan = plans.find(p => p.planId === planId);
+            if (plan) {
+                showAlert(`Viewing Plan ${plan.planId}: ${plan.network}, ${plan.type}, Amount: ${plan.amount}, Size: ${plan.size}, Validity: ${plan.validity}`, 'success');
+            }
         }
 
         function formatCurrency(amount) {
@@ -473,38 +416,37 @@
         }
 
         function loadPlans() {
-            const plansGrid = document.getElementById('plansGrid');
+            const plansBody = document.getElementById('plansBody');
             const enabledPlans = plans.filter(plan => plan.enabled);
 
             if (enabledPlans.length === 0) {
-                plansGrid.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon"><i class="fas fa-gem"></i></div>
-                        <h3>No Plans Available</h3>
-                        <p>Contact your admin to enable plans.</p>
-                    </div>
+                plansBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-gem"></i></div>
+                            <h3>No Plans Available</h3>
+                            <p>Contact your admin to enable plans.</p>
+                        </td>
+                    </tr>
                 `;
                 return;
             }
 
-            plansGrid.innerHTML = enabledPlans.map(plan => `
-                <div class="plan-card" onclick="viewPlan('${plan.name.replace(/'/g, "\\'")}')">
-                    <div class="plan-header">
-                        <h3 class="plan-name">${plan.name}</h3>
-                        <span class="plan-status ${plan.status}">${plan.status.charAt(0).toUpperCase() + plan.status.slice(1)}</span>
-                    </div>
-                    <div class="plan-price">${formatCurrency(plan.price)}</div>
-                    <div class="plan-duration">${plan.duration}</div>
-                    <ul class="plan-features">
-                        ${plan.features.map(feature => `<li><i class="fas fa-check"></i>${feature}</li>`).join('')}
-                    </ul>
-                </div>
+            plansBody.innerHTML = enabledPlans.map(plan => `
+                <tr onclick="viewPlan(${plan.planId})">
+                    <td>${plan.planId}</td>
+                    <td>${plan.network}</td>
+                    <td>${plan.type}</td>
+                    <td class="amount">${formatCurrency(plan.amount)}</td>
+                    <td>${plan.size}</td>
+                    <td>${plan.validity}</td>
+                </tr>
             `).join('');
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             loadPlans();
-            showAlert('Welcome to your Plans page!', 'success');
+            showAlert('Welcome to your MNG DATA Plans page!', 'success');
         });
 
         document.addEventListener('click', function(event) {
