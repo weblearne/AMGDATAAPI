@@ -286,7 +286,7 @@
         </form>
 
         <div class="forgot-password">
-            <a href="#" onclick="showAlert('ba a sakala komai ba ka dawo anjima!', 'success')">Forgot Password?</a>
+            <a href="#" onclick="showAlert('Password recovery email sent!', 'success')">Forgot Password?</a>
         </div>
 
         <div class="forgot-password">
@@ -352,8 +352,9 @@
                 loginBtn.disabled = false;
 
                 // Demo credentials check
-                if (username === 'mng' && password === 'mng123') {
+                if (username === 'user' && password === 'user123') {
                     showAlert('Login successful! Redirecting...', 'success');
+                    window.location.href="user.html"
                     setTimeout(() => {
                         // Redirect to dashboard (placeholder)
                         showAlert('Welcome to MNG DATA API Dashboard!', 'success');
