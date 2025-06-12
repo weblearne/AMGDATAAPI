@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNG DATA API - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #2563eb;
+            --accent: #3b82f6;
+            --danger: #ef4444;
+            --danger-light: #f87171;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #374151;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--card-bg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 15px;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: #f3f4f6;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--text);
+            margin: 5px 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            border-radius: 1px;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: -250px;
+            width: 250px;
+            height: calc(100vh - 60px);
+            background: var(--primary);
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 60px);
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 998;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-menu {
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-right: 3px solid transparent;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--secondary);
+            transform: scale(1.02);
+        }
+
+        .nav-item.active {
+            background: var(--secondary);
+            border-right-color: var(--accent);
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-item a {
+            color: inherit;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            color: #ffffff;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-right: 3px solid transparent;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .dropdown-toggle:hover {
+            background: var(--secondary);
+            transform: scale(1.02);
+        }
+
+        .dropdown-menu {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 20px;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-menu .nav-item {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--danger), var(--danger-light));
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .main-content {
+            margin-top: 60px;
+            padding: 30px;
+            display: flex;
+            gap: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .plans-list {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .plans-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .plan-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.3s ease;
+        }
+
+        .plan-item:hover {
+            background: #f1f5f9;
+        }
+
+        .plan-info {
+            flex: 1;
+        }
+
+        .plan-info h4 {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .plan-info p {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .dashboard-grids {
+            flex: 2;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .grid-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+            background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(135deg, var(--secondary), var(--accent));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            transition: transform 0.3s ease;
+        }
+
+        .grid-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .grid-card i {
+            font-size: 24px;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .grid-card h3 {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .grid-card .value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        @media (min-width: 1024px) {
+            .sidebar {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 250px;
+            }
+
+            .sidebar-overlay {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .dashboard-grids {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .dashboard-grids {
+                grid-template-columns: 1fr;
+            }
+
+            .plans-list, .grid-card {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 0 15px;
+            }
+
+            .logo-text {
+                font-size: 16px;
+            }
+
+            .plans-title {
+                font-size: 16px;
+            }
+
+            .plan-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .grid-card .value {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="menu-toggle" aria-label="Toggle Sidebar" aria-expanded="false" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="logo-container">
+            <img src="LOGO.JPG" alt="mng data logo" style="width: 40px; height: 40px; border-radius: 50px;">
+            <div class="logo-text">MNG DATA API</div>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="sidebar" id="sidebar">
+        <nav class="nav-menu">
+            <div class="dropdown">
+                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                    <span><i class="fas fa-users"></i> Users</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <button class="nav-item active"><i class="fas fa-list"></i> <a href="all-users.html">All Users</a></button>
+                    <button class="nav-item"><i class="fas fa-plus"></i> <a href="fund-user.html">Fund User</a></button>
+                    <button class="nav-item"><i class="fas fa-minus"></i> <a href="debit-user.html">Debit User</a></button>
+                    <button class="nav-item"><i class="fas fa-arrow-up"></i> <a href="upgrade-user.html">Upgrade User</a></button>
+                    <button class="nav-item"><i class="fas fa-trash"></i> <a href="delete-user.html">Delete User</a></button>
+                    <button class="nav-item"><i class="fas fa-ban"></i> <a href="disable-user.html">Disable User</a></button>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                    <span><i class="fas fa-credit-card"></i> Transactions</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <button class="nav-item"><i class="fas fa-list"></i> <a href="all-transactions.html">All Transactions</a></button>
+                    <button class="nav-item"><i class="fas fa-money-bill"></i> <a href="all-funding.html">All Funding</a></button>
+                    <button class="nav-item"><i class="fas fa-sync"></i> <a href="realtime-responses.html">Real-Time Responses</a></button>
+                    <button class="nav-item"><i class="fas fa-clock"></i> <a href="processing-order.html">Processing Order</a></button>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                    <span><i class="fas fa-cog"></i> Settings</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <button class="nav-item"><i class="fas fa-gem"></i> <a href="plans.html">Plans</a></button>
+                    <button class="nav-item"><i class="fas fa-plug"></i> <a href="apis.html">APIs</a></button>
+                    <button class="nav-item"><i class="fas fa-network-wired"></i> <a href="changing-port.html">Changing Port</a></button>
+                    <button class="nav-item"><i class="fas fa-shield-alt"></i> <a href="security.html">Security</a></button>
+                </div>
+            </div>
+            <button class="nav-item"><i class="fas fa-chart-line"></i> <a href="chart.html">Chart</a></button>
+        </nav>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+
+    <main class="main-content">
+        <div class="plans-list">
+            <h2 class="plans-title">Active Plans</h2>
+            <div id="activePlans"></div>
+        </div>
+        <div class="dashboard-grids">
+            <div class="grid-card">
+                <i class="fas fa-users"></i>
+                <h3>Total Users</h3>
+                <div class="value">1,000</div>
+            </div>
+            <div class="grid-card">
+                <i class="fas fa-wallet"></i>
+                <h3>Wallet Balances</h3>
+                <div class="value">₦5,230,450</div>
+            </div>
+            <div class="grid-card">
+                <i class="fas fa-user-plus"></i>
+                <h3>New Users</h3>
+                <div class="value">50</div>
+            </div>
+            <div class="grid-card">
+                <i class="fas fa-money-bill"></i>
+                <h3>Profit</h3>
+                <div class="value">₦1,250,000</div>
+            </div>
+            <div class="grid-card">
+                <i class="fas fa-credit-card"></i>
+                <h3>Transactions</h3>
+                <div class="value">2,500</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample data
+        const plans = [
+            { planId: 83, network: "MTN", type: "GIFTING", amount: 720, size: "1GB", validity: "1 Day", enabled: true },
+            { planId: 84, network: "MTN", type: "GIFTING", amount: 2520, size: "3.2GB", validity: "7 Days", enabled: true },
+            { planId: 85, network: "MTN", type: "GIFTING", amount: 3200, size: "10GB", validity: "7 Days", enabled: false },
+            { planId: 86, network: "MTN", type: "GIFTING", amount: 3100, size: "7GB", validity: "7 Days", enabled: true },
+            { planId: 87, network: "MTN", type: "SME", amount: 500, size: "500MB", validity: "30 Days", enabled: true },
+            { planId: 3, network: "Glo", type: "CORPORATE", amount: 122, size: "500MB", validity: "30 Days", enabled: false }
+        ];
+
+        function showAlert(message, type = 'success') {
+            Swal.fire({
+                title: type === 'success' ? 'Success!' : 'Error!',
+                text: message,
+                icon: type,
+                confirmButtonColor: '#2563eb'
+            });
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            const toggleBtn = document.querySelector('.menu-toggle');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            const isExpanded = sidebar.classList.contains('active');
+            toggleBtn.setAttribute('aria-expanded', isExpanded);
+        }
+
+        function toggleDropdown(element) {
+            const dropdownMenu = element.nextElementSibling;
+            const isActive = dropdownMenu.classList.contains('active');
+            
+            document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('active'));
+            
+            if (!isActive) {
+                dropdownMenu.classList.add('active');
+            }
+        }
+
+        function navigateTo(event) {
+            const navItem = event.currentTarget;
+            const link = navItem.querySelector('a');
+            if (link) {
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                navItem.classList.add('active');
+                
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+                
+                window.location.href = link.href;
+            }
+        }
+
+        function logout() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You will be logged out of your account.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Yes, Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showAlert('Logging out...', 'success');
+                    setTimeout(() => {
+                        showAlert('You have been logged out successfully', 'success');
+                        window.location.href = 'index.html';
+                    }, 1500);
+                }
+            });
+        }
+
+        function togglePlan(planId) {
+            const plan = plans.find(p => p.planId === planId);
+            if (plan) {
+                plan.enabled = !plan.enabled;
+                showAlert(`Plan ${planId} is now ${plan.enabled ? 'enabled' : 'disabled'}`, 'success');
+                loadPlans();
+            }
+        }
+
+        function loadPlans() {
+            const activePlansDiv = document.getElementById('activePlans');
+            const activePlans = plans.filter(plan => plan.enabled);
+            
+            if (activePlans.length === 0) {
+                activePlansDiv.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="fas fa-gem"></i></div>
+                        <h3>No Active Plans</h3>
+                        <p>No plans are currently enabled.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            activePlansDiv.innerHTML = activePlans.map(plan => `
+                <div class="plan-item">
+                    <div class="plan-info">
+                        <h4>${plan.network} ${plan.size} (${plan.type})</h4>
+                        <p>Valid for ${plan.validity}</p>
+                    </div>
+                    <input type="checkbox" checked onclick="togglePlan(${plan.planId})">
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPlans();
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', navigateTo);
+            });
+        });
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && window.innerWidth <= 768) {
+                if (sidebar.classList.contains('active')) {
+                    toggleSidebar();
+                }
+                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('active'));
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('active'));
+            }
+        });
+    </script>
+</body>
+</html>
