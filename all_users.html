@@ -30,7 +30,7 @@
             font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
             background: var(--background);
             color: var(--text);
-            line-height: 1;
+            line-height: 1.6;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -265,6 +265,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .section-title {
@@ -275,18 +277,51 @@
 
         .search-bar {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            position: relative;
         }
 
         .search-bar input {
-            padding: 8px;
+            padding: 8px 8px 8px 32px;
             border: 1px solid var(--border);
             border-radius: 6px;
             font-size: 14px;
             color: var(--text);
             background: var(--background);
-            width: 200px;
+            width: 250px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--secondary);
+            outline: none;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .reset-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            background: var(--secondary);
+            color: #ffffff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .reset-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
         }
 
         .users-table {
@@ -299,6 +334,7 @@
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid var(--border);
+            transition: background 0.3s ease;
         }
 
         .users-table th {
@@ -306,6 +342,14 @@
             color: #ffffff;
             font-weight: 500;
             font-size: 14px;
+        }
+
+        .users-table tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .users-table tbody tr:hover {
+            background: #f1f5f9;
         }
 
         .users-table td {
@@ -325,12 +369,12 @@
 
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
         .action-btn {
-            padding: 6px 12px;
+            padding: 6px;
             border: none;
             border-radius: 6px;
             font-size: 12px;
@@ -342,47 +386,68 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            position: relative;
         }
 
         .action-btn:hover {
             transform: translateY(-2px);
         }
 
-        .action-btn.fund {
-            background: var(--secondary);
-        }
-
-        .action-btn.debit {
-            background: var(--accent);
-        }
-
-        .action-btn.upgrade {
-            background: #10b981;
-        }
-
         .action-btn.delete {
             background: var(--danger);
         }
 
-        .action-btn.disable {
+        .action-btn.disable, .action-btn.enable {
             background: var(--danger-light);
+        }
+
+        .action-btn.enable {
+            background: var(--secondary);
+        }
+
+        .action-btn i {
+            font-size: 14px;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            background: var(--text);
+            color: #ffffff;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover .tooltip {
+            visibility: visible;
         }
 
         .pagination {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
 
         .pagination-btn {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 50%;
             background: var(--card-bg);
             color: var(--text);
             cursor: pointer;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s ease;
         }
 
@@ -400,7 +465,11 @@
         .pagination-btn.active {
             background: var(--primary);
             color: #ffffff;
-            border-color: var(--primary);
+        }
+
+        .pagination-btn.arrow {
+            font-size: 16px;
+            width: 40px;
         }
 
         .empty-state {
@@ -443,9 +512,13 @@
         }
 
         @media (max-width: 1024px) {
-            .search-bar {
+            .section-header {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            .search-bar {
+                width: 100%;
             }
 
             .search-bar input {
@@ -499,12 +572,22 @@
 
             .search-bar input {
                 font-size: 12px;
-                padding: 6px;
+                padding: 6px 6px 6px 28px;
+            }
+
+            .reset-btn {
+                padding: 6px 10px;
+                font-size: 10px;
             }
 
             .pagination-btn {
-                padding: 6px 10px;
+                width: 28px;
+                height: 28px;
                 font-size: 12px;
+            }
+
+            .pagination-btn.arrow {
+                width: 34px;
             }
 
             footer {
@@ -539,11 +622,6 @@
                 </button>
                 <div class="dropdown-menu active">
                     <button class="nav-item active"><i class="fas fa-list"></i> <a href="all-users.html">All Users</a></button>
-                    <button class="nav-item"><i class="fas fa-plus"></i> <a href="fund-user.html">Fund User</a></button>
-                    <button class="nav-item"><i class="fas fa-minus"></i> <a href="debit-user.html">Debit User</a></button>
-                    <button class="nav-item"><i class="fas fa-arrow-up"></i> <a href="upgrade-user.html">Upgrade User</a></button>
-                    <button class="nav-item"><i class="fas fa-trash"></i> <a href="delete-user.html">Delete User</a></button>
-                    <button class="nav-item"><i class="fas fa-ban"></i> <a href="disable-user.html">Disable User</a></button>
                 </div>
             </div>
             <div class="dropdown">
@@ -580,7 +658,9 @@
             <div class="section-header">
                 <h2 class="section-title">All Users</h2>
                 <div class="search-bar">
+                    <i class="fas fa-search"></i>
                     <input type="text" id="searchInput" placeholder="Search by name or email...">
+                    <button class="reset-btn" id="resetBtn">Reset</button>
                 </div>
             </div>
             <table class="users-table">
@@ -605,28 +685,17 @@
     </footer>
 
     <script>
-        // Sample user data
-        const users = [
-            { id: 'USR001', name: 'Basiru Lawan', email: 'basiru.lawan@example.com', balance: 125450, status: 'active' },
-            { id: 'USR002', name: 'Aisha Musa', email: 'aisha.musa@example.com', balance: 75000, status: 'active' },
-            { id: 'USR003', name: 'Chinedu Okeke', email: 'chinedu.okeke@example.com', balance: 32000, status: 'disabled' },
-            { id: 'USR004', name: 'Fatima Bello', email: 'fatima.bello@example.com', balance: 200000, status: 'active' },
-            { id: 'USR005', name: 'Emeka Nwosu', email: 'emeka.nwosu@example.com', balance: 15000, status: 'active' },
-            { id: 'USR006', name: 'Zainab Ibrahim', email: 'zainab.ibrahim@example.com', balance: 45000, status: 'active' },
-            { id: 'USR007', name: 'Tunde Adeyemi', email: 'tunde.adeyemi@example.com', balance: 98000, status: 'disabled' },
-            { id: 'USR008', name: 'Ngozi Eze', email: 'ngozi.eze@example.com', balance: 67000, status: 'active' },
-            { id: 'USR009', name: 'Umar Farouk', email: 'umar.farouk@example.com', balance: 123000, status: 'active' },
-            { id: 'USR010', name: 'Joy Okafor', email: 'joy.okafor@example.com', balance: 54000, status: 'active' },
-            { id: 'USR011', name: 'Sani Yusuf', email: 'sani.yusuf@example.com', balance: 89000, status: 'active' },
-            { id: 'USR012', name: 'Esther Adebayo', email: 'esther.adebayo@example.com', balance: 22000, status: 'disabled' },
-            { id: 'USR013', name: 'Ifeanyi Obi', email: 'ifeanyi.obi@example.com', balance: 175000, status: 'active' },
-            { id: 'USR014', name: 'Hauwa Ali', email: 'hauwa.ali@example.com', balance: 43000, status: 'active' },
-            { id: 'USR015', name: 'Segun Olatunji', email: 'segun.olatunji@example.com', balance: 65000, status: 'active' },
-            { id: 'USR016', name: 'Chiamaka Udeh', email: 'chiamaka.udeh@example.com', balance: 78000, status: 'active' },
-            { id: 'USR017', name: 'Abdul Sani', email: 'abdul.sani@example.com', balance: 92000, status: 'disabled' },
-            { id: 'USR018', name: 'Blessing Okon', email: 'blessing.okon@example.com', balance: 34000, status: 'active' },
-            { id: 'USR019', name: 'Yakubu Danjuma', email: 'yakubu.danjuma@example.com', balance: 110000, status: 'active' },
-            { id: 'USR020', name: 'Mercy Afolabi', email: 'mercy.afolabi@example.com', balance: 56000, status: 'active' }
+        let users = [
+            { id: 'USR001', name: 'Web Learner', email: 'web@gmail.com', balance: 125450, status: 'active' },
+            { id: 'USR002', name: 'shettima NSCDC', email: 'nscdc@gmail.com', balance: 75000, status: 'active' },
+            { id: 'USR003', name: 'saifullah khamisu encrypted', email: 'encrypted@gmail.com', balance: 32000, status: 'disabled' },
+            { id: 'USR004', name: 'Saleem dev.', email: 'saleem@gmail.com', balance: 200000, status: 'active' },
+            { id: 'USR005', name: 'umar khamis', email: 'umar@gmail.com', balance: 15000, status: 'active' },
+            { id: 'USR006', name: 'hamza khamis', email: 'hamza@gmail.com', balance: 45000, status: 'active' },
+            { id: 'USR007', name: 'Sadiq', email: 'sadiq@gmail.com', balance: 98000, status: 'disabled' },
+            { id: 'USR008', name: 'Web Learner', email: 'web@gmail.com', balance: 67000, status: 'active' },
+            { id: 'USR009', name: 'Web Learner', email: 'web@gmail.com', balance: 123000, status: 'active' },
+            { id: 'USR010', name: 'Web Learner', email: 'web@gmail.com', balance: 54000, status: 'active' }
         ];
 
         const ITEMS_PER_PAGE = 10;
@@ -634,10 +703,7 @@
         let filteredUsers = [...users];
 
         function formatCurrency(amount) {
-            return new Intl.NumberFormat('en-NG', {
-                style: 'currency',
-                currency: 'NGN'
-            }).format(amount);
+            return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(amount);
         }
 
         function showAlert(message, type = 'success') {
@@ -649,15 +715,49 @@
             });
         }
 
-        function performAction(action, userId, userName) {
-            const actions = {
-                fund: `Fund user ${userName} (${userId})`,
-                debit: `Debit user ${userName} (${userId})`,
-                upgrade: `Upgrade user ${userName} (${userId})`,
-                delete: `Delete user ${userName} (${userId})`,
-                disable: `Disable user ${userName} (${userId})`
-            };
-            showAlert(actions[action], 'success');
+        function deleteUser(userId, userName) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `You are about to permanently delete ${userName} (${userId}). This action cannot be undone.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, Delete'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    users = users.filter(user => user.id !== userId);
+                    filteredUsers = filteredUsers.filter(user => user.id !== userId);
+                    renderUsers(currentPage);
+                    renderPagination();
+                    showAlert(`User ${userName} (${userId}) has been deleted permanently.`, 'success');
+                }
+            });
+        }
+
+        function toggleUserStatus(userId, userName, currentStatus) {
+            const newStatus = currentStatus === 'active' ? 'disabled' : 'active';
+            const actionText = newStatus === 'disabled' ? 'disable' : 'enable';
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `You are about to ${actionText} ${userName} (${userId}).`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: `Yes, ${actionText.charAt(0).toUpperCase() + actionText.slice(1)}`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    users = users.map(user =>
+                        user.id === userId ? { ...user, status: newStatus } : user
+                    );
+                    filteredUsers = filteredUsers.map(user =>
+                        user.id === userId ? { ...user, status: newStatus } : user
+                    );
+                    renderUsers(currentPage);
+                    showAlert(`User ${userName} (${userId}) has been ${newStatus}.`, 'success');
+                }
+            });
         }
 
         function renderUsers(page) {
@@ -675,11 +775,14 @@
                     <td class="status-${user.status}">${user.status.charAt(0).toUpperCase() + user.status.slice(1)}</td>
                     <td>
                         <div class="action-buttons">
-                            <a href="fund-user.html" class="action-btn fund" onclick="performAction('fund', '${user.id}', '${user.name}')"><i class="fas fa-plus"></i> Fund</a>
-                            <a href="debit-user.html" class="action-btn debit" onclick="performAction('debit', '${user.id}', '${user.name}')"><i class="fas fa-minus"></i> Debit</a>
-                            <a href="upgrade-user.html" class="action-btn upgrade" onclick="performAction('upgrade', '${user.id}', '${user.name}')"><i class="fas fa-arrow-up"></i> Upgrade</a>
-                            <a href="delete-user.html" class="action-btn delete" onclick="performAction('delete', '${user.id}', '${user.name}')"><i class="fas fa-trash"></i> Delete</a>
-                            <a href="disable-user.html" class="action-btn disable" onclick="performAction('disable', '${user.id}', '${user.name}')"><i class="fas fa-ban"></i> Disable</a>
+                            <button class="action-btn delete" onclick="deleteUser('${user.id}', '${user.name}')">
+                                <i class="fas fa-trash"></i>
+                                <span class="tooltip">Delete</span>
+                            </button>
+                            <button class="action-btn ${user.status === 'active' ? 'disable' : 'enable'}" onclick="toggleUserStatus('${user.id}', '${user.name}', '${user.status}')">
+                                <i class="fas ${user.status === 'active' ? 'fa-ban' : 'fa-check'}"></i>
+                                <span class="tooltip">${user.status === 'active' ? 'Disable' : 'Enable'}</span>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -702,8 +805,8 @@
             if (totalPages <= 1) return;
 
             const prevBtn = document.createElement('button');
-            prevBtn.className = `pagination-btn ${currentPage === 1 ? 'disabled' : ''}`;
-            prevBtn.textContent = 'Previous';
+            prevBtn.className = `pagination-btn arrow ${currentPage === 1 ? 'disabled' : ''}`;
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
             prevBtn.onclick = () => {
                 if (currentPage > 1) {
                     currentPage--;
@@ -726,8 +829,8 @@
             }
 
             const nextBtn = document.createElement('button');
-            nextBtn.className = `pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`;
-            nextBtn.textContent = 'Next';
+            nextBtn.className = `pagination-btn arrow ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
             nextBtn.onclick = () => {
                 if (currentPage < totalPages) {
                     currentPage++;
@@ -740,10 +843,22 @@
 
         function filterUsers() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const resetBtn = document.getElementById('resetBtn');
+            resetBtn.style.display = searchTerm ? 'inline-block' : 'none';
+
             filteredUsers = users.filter(user =>
                 user.name.toLowerCase().includes(searchTerm) ||
                 user.email.toLowerCase().includes(searchTerm)
             );
+            currentPage = 1;
+            renderUsers(currentPage);
+            renderPagination();
+        }
+
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('resetBtn').style.display = 'none';
+            filteredUsers = [...users];
             currentPage = 1;
             renderUsers(currentPage);
             renderPagination();
@@ -810,6 +925,7 @@
             renderUsers(currentPage);
             renderPagination();
             document.getElementById('searchInput').addEventListener('input', filterUsers);
+            document.getElementById('resetBtn').addEventListener('click', resetSearch);
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', navigateTo);
             });
