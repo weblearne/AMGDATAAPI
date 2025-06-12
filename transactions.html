@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNG DATA API - Transactions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 0 20px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 15px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .menu-toggle:hover {
+            background: #f3f4f6;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: #374151;
+            margin: 4px 0;
+            transition: 0.2s;
+            border-radius: 1px;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: -280px;
+            width: 280px;
+            height: calc(100vh - 70px);
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            transition: transform 0.2s ease;
+            z-index: 999;
+            overflow-y: auto;
+            will-change: transform;
+        }
+
+        .sidebar.active {
+            transform: translateX(280px);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 70px);
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 998;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-menu {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #60a5fa;
+            color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: #93c5fd;
+            color: white;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            width: 16px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 25px;
+            right: 25px;
+            padding: 12px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 1);
+        }
+
+        .main-content {
+            margin-top: 70px;
+            padding: 30px;
+            transition: margin-left 0.2s ease;
+        }
+
+        .transactions-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .transactions-table th,
+        .transactions-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .transactions-table th {
+            background: #f8fafc;
+            color: #1e3a8a;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            position: sticky;
+            top: 0;
+        }
+
+        .transactions-table tbody tr {
+            transition: background-color 0.1s ease;
+        }
+
+        .transactions-table tbody tr:hover {
+            background: #f1f5f9;
+            cursor: pointer;
+        }
+
+        .transaction-type {
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .transaction-type.credit {
+            color: #10b981;
+        }
+
+        .transaction-type.debit {
+            color: #ef4444;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+        }
+
+        .transaction-amount.credit {
+            color: #10b981;
+        }
+
+        .transaction-amount.debit {
+            color: #ef4444;
+        }
+
+        .transaction-amount.credit::before {
+            content: "+";
+        }
+
+        .transaction-amount.debit::before {
+            content: "-";
+        }
+
+        .transaction-status {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .transaction-status.completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .transaction-status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .transaction-status.failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Desktop styles */
+        @media (min-width: 1024px) {
+            .sidebar {
+                left: 0;
+                transform: none;
+            }
+
+            .main-content {
+                margin-left: 280px;
+            }
+
+            .sidebar-overlay {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+        }
+
+        /* Tablet styles */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .transactions-section {
+                padding: 20px 15px;
+            }
+
+            .transactions-table {
+                font-size: 13px;
+            }
+
+            .transactions-table th,
+            .transactions-table td {
+                padding: 10px 8px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+        }
+
+        /* Mobile styles */
+        @media (max-width: 480px) {
+            .header {
+                padding: 0 15px;
+            }
+
+            .logo-text {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .transactions-table {
+                font-size: 12px;
+            }
+
+            .transactions-table th,
+            .transactions-table td {
+                padding: 8px 6px;
+            }
+
+            .main-content {
+                padding: 15px 10px;
+            }
+
+            .transactions-section {
+                padding: 15px 10px;
+            }
+        }
+
+        /* Performance optimizations */
+        .sidebar,
+        .sidebar-overlay,
+        .transactions-table tbody tr {
+            transform: translateZ(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="menu-toggle" aria-label="Toggle Sidebar" aria-expanded="false" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="logo-container">
+            <img src="LOGO.JPG" alt="mng data logo" style="width: 50px; height: 50px; border-radius: 50px;">
+            <div class="logo-text">MNG DATA API</div>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <nav class="nav-menu">
+            <button class="nav-item" onclick="navigateTo('dashboard')">
+                <i class="fas fa-tachometer-alt"></i> <a href="user.html" style="color: #ffffff; text-decoration: none;">Dashboard</a> 
+            </button>
+            <button class="nav-item"><i class="fas fa-star"></i> <a href="plans.html" style="text-decoration: none; color:#ffffff;">Plans</a></button>
+            <button class="nav-item"><i class="fas fa-credit-card"></i> <a href="transactions.html"  style="text-decoration: none; color: #ffffff;">Transactions</a></button>
+            <button class="nav-item" onclick="navigateTo('settings')">
+                <i class="fas fa-cog"></i> Settings
+            </button>
+            <button class="nav-item" onclick="navigateTo('documentation')">
+                <i class="fas fa-book"></i> Documentation
+            </button>
+            <button class="nav-item"><i class="fas fa-user"></i> <a href="Profile.html" style="text-decoration: none; color: #ffffff;">Profile</a></button>
+        </nav>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
+
+    <main class="main-content">
+        <div class="transactions-section">
+            <h1 class="section-title">
+                <i class="fas fa-credit-card"></i>
+                Your Transactions
+            </h1>
+            <div class="table-container">
+                <table class="transactions-table" id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                        <tr>
+                            <td colspan="7" class="loading">
+                                <div class="loading-spinner"></div>
+                                <p>Loading transactions...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Optimized transactions data
+        const transactions = [
+            {
+                id: 'TXN001',
+                type: 'credit',
+                title: 'Wallet Top-up',
+                description: 'Bank transfer deposit',
+                amount: 10000,
+                status: 'completed',
+                date: '2024-06-11 14:30',
+                enabled: true
+            },
+            {
+                id: 'TXN002',
+                type: 'debit',
+                title: 'Data Bundle Purchase',
+                description: 'MTN 5GB data bundle',
+                amount: 2500,
+                status: 'completed',
+                date: '2024-06-11 12:15',
+                enabled: true
+            },
+            {
+                id: 'TXN003',
+                type: 'debit',
+                title: 'Airtime Purchase',
+                description: 'GLO ₦1000 airtime',
+                amount: 1000,
+                status: 'completed',
+                date: '2024-06-10 18:20',
+                enabled: true
+            },
+            {
+                id: 'TXN004',
+                type: 'debit',
+                title: 'API Usage Charge',
+                description: 'Monthly API calls billing',
+                amount: 450,
+                status: 'completed',
+                date: '2024-06-10 09:45',
+                enabled: true
+            },
+            {
+                id: 'TXN005',
+                type: 'credit',
+                title: 'Referral Bonus',
+                description: 'Friend referral reward',
+                amount: 500,
+                status: 'completed',
+                date: '2024-06-09 16:30',
+                enabled: true
+            },
+            {
+                id: 'TXN006',
+                type: 'debit',
+                title: 'Electricity Bill',
+                description: 'AEDC prepaid token',
+                amount: 3000,
+                status: 'pending',
+                date: '2024-06-09 11:00',
+                enabled: true
+            }
+        ];
+
+        let isLoading = false;
+
+        // Optimized alert function with reduced animations
+        function showAlert(message, type = 'success') {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: type === 'success' ? 'Success!' : type === 'error' ? 'Error!' : 'Info',
+                    text: message,
+                    icon: type,
+                    confirmButtonColor: '#2563eb',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            } else {
+                alert(message);
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            const toggleBtn = document.querySelector('.menu-toggle');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            toggleBtn.setAttribute('aria-expanded', sidebar.classList.contains('active'));
+        }
+
+        function navigateTo(page) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+            
+            showAlert(`Navigating to ${page} page...`, 'info');
+            
+            // Simulate navigation delay
+            setTimeout(() => {
+                // Uncomment for actual navigation
+                // window.location.href = `${page}.html`;
+            }, 1000);
+        }
+
+        function logout() {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You will be logged out of your account.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#2563eb',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Yes, Logout'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        showAlert('Logging out...', 'success');
+                        setTimeout(() => {
+                            // window.location.href = 'index.html';
+                        }, 1500);
+                    }
+                });
+            } else {
+                if (confirm('Are you sure you want to log out?')) {
+                    showAlert('Logging out...', 'success');
+                }
+            }
+        }
+
+        function viewTransaction(transactionId) {
+            const transaction = transactions.find(t => t.id === transactionId);
+            if (transaction) {
+                showAlert(`Viewing transaction: ${transaction.title}`, 'info');
+            }
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-NG', {
+                style: 'currency',
+                currency: 'NGN',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function loadTransactions() {
+            if (isLoading) return;
+            isLoading = true;
+
+            const transactionsBody = document.getElementById('transactionsBody');
+            const enabledTransactions = transactions.filter(t => t.enabled);
+
+            // Simulate loading delay
+            setTimeout(() => {
+                if (enabledTransactions.length === 0) {
+                    transactionsBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-state-icon"><i class="fas fa-credit-card"></i></div>
+                                <h3>No Transactions Available</h3>
+                                <p>You haven't made any transactions yet.</p>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    transactionsBody.innerHTML = enabledTransactions.map(transaction => `
+                        <tr onclick="viewTransaction('${transaction.id}')">
+                            <td>${transaction.id}</td>
+                            <td class="transaction-type ${transaction.type}">${transaction.type}</td>
+                            <td>${transaction.title}</td>
+                            <td>${transaction.description}</td>
+                            <td class="transaction-amount ${transaction.type}">${formatCurrency(transaction.amount)}</td>
+                            <td><span class="transaction-status ${transaction.status}">${transaction.status}</span></td>
+                            <td>${formatDate(transaction.date)}</td>
+                        </tr>
+                    `).join('');
+                }
+                isLoading = false;
+            }, 800);
+        }
+
+        // Event listeners with passive option for better performance
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTransactions();
+            showAlert('Welcome to your Transactions page!', 'success');
+        });
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && window.innerWidth <= 768) {
+                if (sidebar.classList.contains('active')) {
+                    toggleSidebar();
+                }
+            }
+        }, { passive: true });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        }, { passive: true });
+
+        // Prevent multiple rapid clicks
+        let clickTimeout;
+        function debounceClick(fn, delay = 300) {
+            return function(...args) {
+                clearTimeout(clickTimeout);
+                clickTimeout = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
+    </script>
+</body>
+</html>
