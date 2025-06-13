@@ -609,7 +609,7 @@
             <form id="planForm" name="planForm" class="plan-form">
                 <div class="form-group">
                     <label for="planId">Plan ID</label>
-                    <input type="text" id="planId" name="planId" placeholder="Enter Plan ID (e.g., MTN-5GB-D)" required pattern="[A-Za-z0-9-]{5,15}">
+                    <input type="text" id="planId" name="planId" placeholder="Enter Plan ID">
                 </div>
                 <div class="form-group">
                     <label for="network">Network</label>
@@ -795,10 +795,10 @@
                 return;
             }
 
-            if (!/^[A-Za-z0-9-]{5,15}$/.test(planId)) {
-                showAlert('Plan ID must be 5-15 characters, alphanumeric with hyphens', 'error');
-                return;
-            }
+            // if (!/^[A-Za-z0-9-]{5,15}$/.test(planId)) {
+            //     showAlert('Plan ID must be 5-15 characters, alphanumeric with hyphens', 'error');
+            //     return;
+            // }
 
             if (amount < 100) {
                 showAlert('Amount must be at least ₦100', 'error');
