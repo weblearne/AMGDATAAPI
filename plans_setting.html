@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNG DATA API - Set Plans</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #2563eb;
+            --accent: #3b82f6;
+            --danger: #ef4444;
+            --danger-light: #f87171;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #374151;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: var(--card-bg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 0 clamp(10px, 3vw, 20px);
+            height: clamp(50px, 10vh, 60px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 2vw, 12px);
+        }
+
+        .logo-text {
+            font-size: clamp(14px, 4vw, 18px);
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: clamp(5px, 2vw, 10px);
+        }
+
+        .back-btn, .logout-btn {
+            padding: clamp(6px, 2vw, 8px) clamp(10px, 3vw, 16px);
+            border: none;
+            border-radius: 6px;
+            font-size: clamp(12px, 3vw, 14px);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: clamp(4px, 1vw, 6px);
+        }
+
+        .back-btn {
+            background: #f3f4f6;
+            color: var(--primary);
+        }
+
+        .back-btn:hover {
+            background: var(--border);
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            margin-top: clamp(50px, 10vh, 60px);
+            padding: clamp(15px, 5vw, 30px);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: clamp(20px, 5vw, 30px);
+        }
+
+        .plans-section, .plans-table-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: clamp(15px, 5vw, 25px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: min(100%, 800px);
+        }
+
+        .section-title {
+            font-size: clamp(18px, 6vw, 24px);
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: clamp(15px, 4vw, 20px);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(6px, 2vw, 10px);
+        }
+
+        .plan-form {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(15px, 4vw, 20px);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 2vw, 8px);
+        }
+
+        .form-group label {
+            font-size: clamp(12px, 3.5vw, 14px);
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: clamp(8px, 2.5vw, 10px);
+            font-size: clamp(12px, 3.5vw, 14px);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #f9fafb;
+            color: var(--text);
+            transition: border-color 0.3s ease;
+            width: 100%;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-light);
+        }
+
+        .submit-btn {
+            padding: clamp(10px, 3vw, 12px);
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: clamp(12px, 3.5vw, 14px);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(6px, 2vw, 8px);
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .plans-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(12px, 3.5vw, 14px);
+        }
+
+        .plans-table th,
+        .plans-table td {
+            padding: clamp(8px, 2.5vw, 12px);
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .plans-table th {
+            background: #f8fafc;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: clamp(10px, 3vw, 12px);
+            position: sticky;
+            top: 0;
+        }
+
+        .plans-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .plans-table tbody tr:hover {
+            background: #f1f5f9;
+            cursor: pointer;
+        }
+
+        .plan-status {
+            font-size: clamp(10px, 3vw, 12px);
+            padding: clamp(4px, 1vw, 6px) clamp(8px, 2vw, 10px);
+            border-radius: 12px;
+            font-weight: 500;
+            text-transform: capitalize;
+            display: inline-block;
+        }
+
+        .plan-status.enabled {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .plan-status.disabled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-btn {
+            padding: clamp(4px, 1vw, 6px) clamp(8px, 2vw, 10px);
+            border: none;
+            border-radius: 4px;
+            font-size: clamp(10px, 3vw, 12px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: clamp(4px, 1vw, 6px);
+        }
+
+        .edit-btn {
+            background: var(--accent);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-1px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: clamp(20px, 5vw, 40px);
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: clamp(30px, 10vw, 48px);
+            margin-bottom: clamp(10px, 3vw, 15px);
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: clamp(20px, 5vw, 40px);
+            color: var(--text-light);
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: clamp(30px, 8vw, 40px);
+            height: clamp(30px, 8vw, 40px);
+            animation: spin 1s linear infinite;
+            margin: 0 auto clamp(10px, 3vw, 15px);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            background: var(--primary);
+            color: #ffffff;
+            text-align: center;
+            padding: clamp(10px, 3vw, 15px) clamp(15px, 4vw, 20px);
+            font-size: clamp(10px, 3vw, 14px);
+            margin-top: auto;
+        }
+
+        /* Extra small devices (≤360px) */
+        @media (max-width: 360px) {
+            .header {
+                height: 50px;
+            }
+
+            .main-content {
+                margin-top: 50px;
+                padding: 10px;
+                gap: 15px;
+            }
+
+            .logo-text {
+                font-size: 12px;
+            }
+
+            .logo-container img {
+                width: 30px;
+                height: 30px;
+            }
+
+            .back-btn, .logout-btn {
+                padding: 5px 8px;
+                font-size: 10px;
+                gap: 4px;
+            }
+
+            .back-btn i, .logout-btn i {
+                font-size: 10px;
+            }
+
+            .plans-section, .plans-table-section {
+                padding: 10px;
+            }
+
+            .section-title {
+                font-size: 16px;
+                gap: 6px;
+            }
+
+            .section-title i {
+                font-size: 16px;
+            }
+
+            .form-group label {
+                font-size: 10px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 6px;
+                font-size: 10px;
+            }
+
+            .submit-btn {
+                padding: 8px;
+                font-size: 10px;
+                gap: 4px;
+            }
+
+            .submit-btn i {
+                font-size: 10px;
+            }
+
+            .plans-table {
+                font-size: 10px;
+            }
+
+            .plans-table th,
+            .plans-table td {
+                padding: 6px;
+            }
+
+            .plans-table th {
+                font-size: 8px;
+            }
+
+            .plan-status {
+                font-size: 8px;
+                padding: 3px 6px;
+            }
+
+            .action-btn {
+                font-size: 8px;
+                padding: 3px 6px;
+            }
+
+            footer {
+                font-size: 10px;
+                padding: 8px 10px;
+            }
+        }
+
+        /* Small devices (361px–767px) */
+        @media (min-width: 361px) and (max-width: 767px) {
+            .header {
+                padding: 0 15px;
+            }
+
+            .main-content {
+                padding: 15px;
+                gap: 20px;
+            }
+
+            .logo-text {
+                font-size: 14px;
+            }
+
+            .back-btn, .logout-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .plans-section, .plans-table-section {
+                padding: 15px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .form-group label {
+                font-size: 12px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 8px;
+                font-size: 12px;
+            }
+
+            .submit-btn {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .plans-table {
+                font-size: 12px;
+            }
+
+            .plans-table th,
+            .plans-table td {
+                padding: 8px;
+            }
+
+            .plans-table th {
+                font-size: 10px;
+            }
+
+            .plan-status {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+
+            .action-btn {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+
+            footer {
+                font-size: 12px;
+                padding: 10px 15px;
+            }
+        }
+
+        /* Medium devices (768px–991px) */
+        @media (min-width: 768px) and (max-width: 991px) {
+            .main-content {
+                padding: 20px;
+                gap: 25px;
+            }
+
+            .plans-section, .plans-table-section {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+
+            .form-group label {
+                font-size: 13px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 9px;
+                font-size: 13px;
+            }
+
+            .submit-btn {
+                padding: 11px;
+                font-size: 13px;
+            }
+
+            .plans-table {
+                font-size: 13px;
+            }
+
+            .plans-table th,
+            .plans-table td {
+                padding: 10px;
+            }
+
+            .plans-table th {
+                font-size: 11px;
+            }
+
+            .plan-status {
+                font-size: 11px;
+                padding: 5px 9px;
+            }
+
+            .action-btn {
+                font-size: 11px;
+                padding: 5px 9px;
+            }
+        }
+
+        /* Large devices (≥992px) */
+        @media (min-width: 992px) {
+            .main-content {
+                padding: 30px;
+                gap: 30px;
+            }
+
+            .plans-section, .plans-table-section {
+                padding: 25px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .form-group label {
+                font-size: 14px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .submit-btn {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .plans-table {
+                font-size: 14px;
+            }
+
+            .plans-table th,
+            .plans-table td {
+                padding: 12px;
+            }
+
+            .plans-table th {
+                font-size: 12px;
+            }
+
+            .plan-status {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+
+            .action-btn {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img src="LOGO.JPG" alt="mng data logo" style="width: clamp(30px, 8vw, 40px); height: clamp(30px, 8vw, 40px); border-radius: 50px;">
+            <div class="logo-text">MNG DATA API Admin Panel</div>
+        </div>
+        <div class="header-buttons">
+            <button id="backButton" name="backButton" class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+            <button id="logoutButton" name="logoutButton" class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="plans-section">
+            <h1 class="section-title">
+                <i class="fas fa-cog"></i>
+                Set Data Plan
+            </h1>
+            <form id="planForm" name="planForm" class="plan-form">
+                <div class="form-group">
+                    <label for="planId">Plan ID</label>
+                    <input type="text" id="planId" name="planId" placeholder="Enter Plan ID (e.g., MTN-5GB-D)" required pattern="[A-Za-z0-9-]{5,15}">
+                </div>
+                <div class="form-group">
+                    <label for="network">Network</label>
+                    <select id="network" name="network" required>
+                        <option value="" disabled selected>Select Network</option>
+                        <option value="mtn">MTN</option>
+                        <option value="glo">GLO</option>
+                        <option value="airtel">Airtel</option>
+                        <option value="9mobile">9mobile</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="planType">Plan Type</label>
+                    <select id="planType" name="planType" required>
+                        <option value="" disabled selected>Select Plan Type</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount (₦)</label>
+                    <input type="number" id="amount" name="amount" placeholder="Enter Amount" required min="100">
+                </div>
+                <div class="form-group">
+                    <label for="size">Size</label>
+                    <select id="size" name="size" required>
+                        <option value="" disabled selected>Select Size</option>
+                        <option value="500MB">500MB</option>
+                        <option value="1GB">1GB</option>
+                        <option value="2GB">2GB</option>
+                        <option value="5GB">5GB</option>
+                        <option value="10GB">10GB</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="validity">Validity</label>
+                    <select id="validity" name="validity" required>
+                        <option value="" disabled selected>Select Validity</option>
+                        <option value="1 Day">1 Day</option>
+                        <option value="7 Days">7 Days</option>
+                        <option value="14 Days">14 Days</option>
+                        <option value="30 Days">30 Days</option>
+                    </select>
+                </div>
+                <button type="submit" id="submitPlan" name="submitPlan" class="submit-btn">
+                    <i class="fas fa-check"></i> Save Plan
+                </button>
+            </form>
+        </div>
+
+        <div class="plans-table-section">
+            <h1 class="section-title">
+                <i class="fas fa-list"></i>
+                Existing Plans
+            </h1>
+            <div class="table-container" id="tableContainer" name="tableContainer">
+                <table class="plans-table" id="plansTable" name="plansTable">
+                    <thead>
+                        <tr>
+                            <th>Plan ID</th>
+                            <th>Network</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Size</th>
+                            <th>Validity</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="plansBody" name="plansBody">
+                        <tr>
+                            <td colspan="8" class="loading">
+                                <div class="loading-spinner"></div>
+                                <p>Loading plans...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        © 2025 MNG DATA API. All rights reserved.
+    </footer>
+
+    <script>
+        // Sample plans data
+        const plans = [
+            {
+                id: 'MTN-5GB-M',
+                network: 'MTN',
+                type: 'Monthly',
+                amount: 3000,
+                size: '5GB',
+                validity: '30 Days',
+                enabled: true
+            },
+            {
+                id: 'GLO-1GB-W',
+                network: 'GLO',
+                type: 'Weekly',
+                amount: 500,
+                size: '1GB',
+                validity: '7 Days',
+                enabled: true
+            },
+            {
+                id: 'AIRTEL-500MB-D',
+                network: 'Airtel',
+                type: 'Daily',
+                amount: 100,
+                size: '500MB',
+                validity: '1 Day',
+                enabled: false
+            },
+            {
+                id: '9MOBILE-2GB-M',
+                network: '9mobile',
+                type: 'Monthly',
+                amount: 1200,
+                size: '2GB',
+                validity: '30 Days',
+                enabled: true
+            }
+        ];
+
+        let isLoading = false;
+
+        function showAlert(message, type = 'success') {
+            Swal.fire({
+                title: type === 'success' ? 'Success!' : 'Error!',
+                text: message,
+                icon: type,
+                confirmButtonColor: '#2563eb'
+            });
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function logout() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You will be logged out of your account.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Yes, Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showAlert('Logging out...', 'success');
+                    setTimeout(() => {
+                        showAlert('You have been logged out successfully', 'success');
+                        window.location.href = 'index.html';
+                    }, 1500);
+                }
+            });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-NG', {
+                style: 'currency',
+                currency: 'NGN',
+                minimumFractionDigits: 0
+            }).format(amount).replace('NGN', '₦');
+        }
+
+        function handlePlanSubmission(event) {
+            event.preventDefault();
+            const planId = document.getElementById('planId').value;
+            const network = document.getElementById('network').value;
+            const planType = document.getElementById('planType').value;
+            const amount = document.getElementById('amount').value;
+            const size = document.getElementById('size').value;
+            const validity = document.getElementById('validity').value;
+
+            if (!planId || !network || !planType || !amount || !size || !validity) {
+                showAlert('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (!/^[A-Za-z0-9-]{5,15}$/.test(planId)) {
+                showAlert('Plan ID must be 5-15 characters, alphanumeric with hyphens', 'error');
+                return;
+            }
+
+            if (amount < 100) {
+                showAlert('Amount must be at least ₦100', 'error');
+                return;
+            }
+
+            showAlert(`Plan ${planId} (${network}, ${size}, ${validity}) saved successfully!`, 'success');
+            // In PHP, send form data to backend for saving
+            document.getElementById('planForm').reset();
+        }
+
+        function editPlan(planId) {
+            const plan = plans.find(p => p.id === planId);
+            if (plan) {
+                document.getElementById('planId').value = plan.id;
+                document.getElementById('network').value = plan.network.toLowerCase();
+                document.getElementById('planType').value = plan.type.toLowerCase();
+                document.getElementById('amount').value = plan.amount;
+                document.getElementById('size').value = plan.size;
+                document.getElementById('validity').value = plan.validity;
+                showAlert(`Editing plan ${planId}. Update and save.`, 'info');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function loadPlans() {
+            if (isLoading) return;
+            isLoading = true;
+
+            const plansBody = document.getElementById('plansBody');
+
+            setTimeout(() => {
+                if (plans.length === 0) {
+                    plansBody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <div class="empty-state-icon"><i class="fas fa-cog"></i></div>
+                                <h3>No Plans Available</h3>
+                                <p>No data plans have been created yet.</p>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    plansBody.innerHTML = plans.map(plan => `
+                        <tr>
+                            <td>${plan.id}</td>
+                            <td>${plan.network}</td>
+                            <td>${plan.type}</td>
+                            <td>${formatCurrency(plan.amount)}</td>
+                            <td>${plan.size}</td>
+                            <td>${plan.validity}</td>
+                            <td><span class="plan-status ${plan.enabled ? 'enabled' : 'disabled'}">${plan.enabled ? 'Enabled' : 'Disabled'}</span></td>
+                            <td>
+                                <button class="action-btn edit-btn" onclick="editPlan('${plan.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+                isLoading = false;
+            }, 800);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const planForm = document.getElementById('planForm');
+            planForm.addEventListener('submit', handlePlanSubmission);
+            loadPlans();
+            showAlert('Welcome to the Set Plans page!', 'success');
+        });
+    </script>
+</body>
+</html>
