@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNG DATA API - Upgrade User</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #2563eb;
+            --accent: #3b82f6;
+            --danger: #ef4444;
+            --danger-light: #f87171;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #374151;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: var(--card-bg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .back-btn, .logout-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .back-btn {
+            background: #f3f4f6;
+            color: var(--primary);
+        }
+
+        .back-btn:hover {
+            background: var(--border);
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            margin-top: 60px;
+            padding: 30px;
+            flex: 1;
+        }
+
+        .upgrade-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .upgrade-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #f9fafb;
+            color: var(--text);
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-light);
+        }
+
+        .submit-btn {
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        footer {
+            background: var(--primary);
+            color: #ffffff;
+            text-align: center;
+            padding: 15px 20px;
+            font-size: 14px;
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .upgrade-section {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 0 15px;
+            }
+
+            .logo-text {
+                font-size: 16px;
+            }
+
+            .back-btn, .logout-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .upgrade-section {
+                padding: 15px;
+            }
+
+            .form-group input,
+            .form-group select {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            .submit-btn {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            footer {
+                font-size: 12px;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img src="LOGO.JPG" alt="mng data logo" style="width: 40px; height: 40px; border-radius: 50px;">
+            <div class="logo-text">MNG DATA API Admin Panel</div>
+        </div>
+        <div class="header-buttons">
+            <button id="backButton" name="backButton" class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+            <button id="logoutButton" name="logoutButton" class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="upgrade-section">
+            <h1 class="section-title">
+                <i class="fas fa-arrow-up"></i>
+                Upgrade User
+            </h1>
+            <form id="upgradeForm" name="upgradeForm" class="upgrade-form">
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="tel" id="phoneNumber" name="phonenumber" placeholder="Enter phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="userType">User Type</label>
+                    <select id="userType" name="userType" required>
+                        <option value="" disabled selected>Select user type</option>
+                        <option value="standard">Standard User</option>
+                        <option value="premium">Premium User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit" id="submitUpgrade" name="submitUpgrade" class="submit-btn">
+                    <i class="fas fa-check"></i> Upgrade User
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        © 2025 MNG DATA API. All rights reserved.
+    </footer>
+
+    <script>
+        function showAlert(message, type = 'success') {
+            Swal.fire({
+                title: type === 'success' ? 'Success!' : 'Error!',
+                text: message,
+                icon: type,
+                confirmButtonColor: '#2563eb'
+            });
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function logout() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You will be logged out of your account.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Yes, Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showAlert('Logging out...', 'success');
+                    setTimeout(() => {
+                        showAlert('You have been logged out successfully', 'success');
+                        window.location.href = 'index.html';
+                    }, 1500);
+                }
+            });
+        }
+
+        function handleUpgrade(event) {
+            event.preventDefault();
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const userType = document.getElementById('userType').value;
+
+            if (!phoneNumber || !userType) {
+                showAlert('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (!/^[0-9]{11}$/.test(phoneNumber)) {
+                showAlert('Please enter a valid 11-digit phone number', 'error');
+                return;
+            }
+
+            showAlert(`User with phone number ${phoneNumber} will be upgraded to ${userType} status`, 'success');
+            // In PHP, this is where you would send the data to the backend
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const upgradeForm = document.getElementById('upgradeForm');
+            upgradeForm.addEventListener('submit', handleUpgrade);
+        });
+    </script>
+</body>
+</html>

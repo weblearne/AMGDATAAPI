@@ -1,32 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNG DATA API - All Users</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root {
-            --primary: #1e3a8a;
-            --secondary: #2563eb;
-            --accent: #3b82f6;
-            --danger: #ef4444;
-            --danger-light: #f87171;
-            --background: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #374151;
-            --text-light: #6b7280;
-            --border: #e5e7eb;
+<!DOCTYPE html> <!-- html_doctype -->
+<html lang="en"> <!-- html_root -->
+<head> <!-- head_section -->
+    <meta charset="UTF-8"> <!-- meta_charset -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- meta_viewport -->
+    <title>MNG DATA API - All Users</title> <!-- page_title -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- font_awesome_css -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- sweetalert_script -->
+    <style> /* internal_styles */
+        :root { /* css_variables */
+            --primary: #1e3a8a; /* primary_color */
+            --secondary: #2563eb; /* secondary_color */
+            --accent: #3b82f6; /* accent_color */
+            --danger: #ef4444; /* danger_color */
+            --danger-light: #f87171; /* danger_light_color */
+            --background: #f8fafc; /* background_color */
+            --card-bg: #ffffff; /* card_background_color */
+            --text: #374151; /* text_color */
+            --text-light: #6b7280; /* text_light_color */
+            --border: #e5e7eb; /* border_color */
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; } /* global_reset */
 
-        body {
+        body { /* body_styles */
             font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
             background: var(--background);
             color: var(--text);
@@ -36,13 +32,14 @@
             flex-direction: column;
         }
 
-        .header {
+        .header { /* header_styles */
             background: var(--card-bg);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             padding: 0 20px;
             height: 60px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             position: fixed;
             top: 0;
             left: 0;
@@ -50,186 +47,28 @@
             z-index: 1000;
         }
 
-        .logo-container {
+        .logo-container { /* logo_container_styles */
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .logo-text {
+        .logo-text { /* logo_text_styles */
             font-size: 20px;
             font-weight: 600;
             color: var(--primary);
         }
 
-        .menu-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            margin-right: 15px;
-            border-radius: 6px;
-            transition: background 0.3s ease;
+        .header-buttons { /* header_buttons_styles */
+            display: flex;
+            gap: 10px;
         }
 
-        .menu-toggle:hover {
-            background: #f3f4f6;
-        }
-
-        .menu-toggle span {
-            display: block;
-            width: 22px;
-            height: 2px;
-            background: var(--text);
-            margin: 5px 0;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            border-radius: 1px;
-        }
-
-        .menu-toggle.active span:nth-child(1) {
-            transform: translateY(7px) rotate(45deg);
-        }
-
-        .menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .menu-toggle.active span:nth-child(3) {
-            transform: translateY(-7px) rotate(-45deg);
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 60px;
-            left: -250px;
-            width: 250px;
-            height: calc(100vh - 60px);
+        .header-btn { /* header_button_styles */
             background: var(--primary);
-            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 999;
-            overflow-y: auto;
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .sidebar-overlay {
-            position: fixed;
-            top: 60px;
-            left: 0;
-            width: 100%;
-            height: calc(100vh - 60px);
-            background: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 998;
-        }
-
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .nav-menu {
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
             color: #ffffff;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            border-right: 3px solid transparent;
-            background: none;
             border: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        .nav-item:hover {
-            background: var(--secondary);
-            transform: scale(1.02);
-        }
-
-        .nav-item.active {
-            background: var(--secondary);
-            border-right-color: var(--accent);
-        }
-
-        .nav-item i {
-            font-size: 18px;
-            width: 24px;
-            text-align: center;
-        }
-
-        .nav-item a {
-            color: inherit;
-            text-decoration: none;
-            display: block;
-            width: 100%;
-        }
-
-        .dropdown {
-            position: relative;
-        }
-
-        .dropdown-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 20px;
-            color: #ffffff;
-            background: none;
-            border: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border-right: 3px solid transparent;
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        .dropdown-toggle:hover {
-            background: var(--secondary);
-            transform: scale(1.02);
-        }
-
-        .dropdown-menu {
-            display: none;
-            background: rgba(255, 255, 255, 0.05);
-            padding-left: 20px;
-        }
-
-        .dropdown-menu.active {
-            display: block;
-        }
-
-        .dropdown-menu .nav-item {
-            padding: 10px 20px;
-            font-size: 14px;
-        }
-
-        .logout-btn {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            padding: 12px;
-            background: linear-gradient(135deg, var(--danger), var(--danger-light));
-            color: white;
-            border: none;
+            padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
@@ -237,30 +76,28 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
         }
 
-        .logout-btn:hover {
+        .header-btn:hover { /* header_button_hover_styles */
+            background: var(--secondary);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
-        .main-content {
+        .main-content { /* main_content_styles */
             margin-top: 60px;
             padding: 30px;
-            transition: margin-left 0.3s ease;
             flex: 1;
         }
 
-        .users-section {
+        .users-section { /* users_section_styles */
             background: var(--card-bg);
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        .section-header {
+        .section-header { /* section_header_styles */
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -269,20 +106,20 @@
             gap: 10px;
         }
 
-        .section-title {
+        .section-title { /* section_title_styles */
             font-size: 18px;
             font-weight: 600;
             color: var(--primary);
         }
 
-        .search-bar {
+        .search-bar { /* search_bar_styles */
             display: flex;
             gap: 8px;
             align-items: center;
             position: relative;
         }
 
-        .search-bar input {
+        .search-bar input { /* search_input_styles */
             padding: 8px 8px 8px 32px;
             border: 1px solid var(--border);
             border-radius: 6px;
@@ -293,12 +130,9 @@
             transition: all 0.3s ease;
         }
 
-        .search-bar input:focus {
-            border-color: var(--secondary);
-            outline: none;
-        }
+        .search-bar input:focus { border-color: var(--secondary); outline: none; }
 
-        .search-bar i {
+        .search-bar i { /* search_icon_styles */
             position: absolute;
             left: 10px;
             top: 50%;
@@ -307,7 +141,7 @@
             font-size: 14px;
         }
 
-        .reset-btn {
+        .reset-btn { /* reset_button_styles */
             padding: 8px 12px;
             border: none;
             border-radius: 6px;
@@ -319,61 +153,49 @@
             display: none;
         }
 
-        .reset-btn:hover {
-            background: var(--accent);
-            transform: translateY(-2px);
-        }
+        .reset-btn:hover { background: var(--accent); transform: translateY(-2px); }
 
-        .users-table {
+        .users-table { /* users_table_styles */
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
 
-        .users-table th, .users-table td {
+        .users-table th, .users-table td { /* table_cell_styles */
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid var(--border);
             transition: background 0.3s ease;
         }
 
-        .users-table th {
+        .users-table th { /* table_header_styles */
             background: var(--primary);
             color: #ffffff;
             font-weight: 500;
             font-size: 14px;
         }
 
-        .users-table tbody tr:nth-child(even) {
-            background: #f9fafb;
-        }
+        .users-table tbody tr:nth-child(even) { background: #f9fafb; }
+        .users-table tbody tr:hover { background: #f1f5f9; }
+        .users-table td { font-size: 14px; color: var(--text); }
 
-        .users-table tbody tr:hover {
-            background: #f1f5f9;
-        }
-
-        .users-table td {
-            font-size: 14px;
-            color: var(--text);
-        }
-
-        .status-active {
+        .status-active { /* status_active_styles */
             color: var(--secondary);
             font-weight: 500;
         }
 
-        .status-disabled {
+        .status-disabled { /* status_disabled_styles */
             color: var(--danger);
             font-weight: 500;
         }
 
-        .action-buttons {
+        .action-buttons { /* action_buttons_styles */
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
         }
 
-        .action-btn {
+        .action-btn { /* action_button_styles */
             padding: 6px;
             border: none;
             border-radius: 6px;
@@ -389,27 +211,13 @@
             position: relative;
         }
 
-        .action-btn:hover {
-            transform: translateY(-2px);
-        }
+        .action-btn:hover { transform: translateY(-2px); }
+        .action-btn.delete { background: var(--danger); }
+        .action-btn.disable, .action-btn.enable { background: var(--danger-light); }
+        .action-btn.enable { background: var(--secondary); }
+        .action-btn i { font-size: 14px; }
 
-        .action-btn.delete {
-            background: var(--danger);
-        }
-
-        .action-btn.disable, .action-btn.enable {
-            background: var(--danger-light);
-        }
-
-        .action-btn.enable {
-            background: var(--secondary);
-        }
-
-        .action-btn i {
-            font-size: 14px;
-        }
-
-        .tooltip {
+        .tooltip { /* tooltip_styles */
             visibility: hidden;
             background: var(--text);
             color: #ffffff;
@@ -425,18 +233,16 @@
             transition: all 0.3s ease;
         }
 
-        .action-btn:hover .tooltip {
-            visibility: visible;
-        }
+        .action-btn:hover .tooltip { visibility: visible; }
 
-        .pagination {
+        .pagination { /* pagination_styles */
             display: flex;
             justify-content: center;
             gap: 8px;
             align-items: center;
         }
 
-        .pagination-btn {
+        .pagination-btn { /* pagination_button_styles */
             width: 32px;
             height: 32px;
             border: none;
@@ -451,40 +257,24 @@
             transition: all 0.3s ease;
         }
 
-        .pagination-btn:hover {
-            background: var(--secondary);
-            color: #ffffff;
-        }
+        .pagination-btn:hover { background: var(--secondary); color: #ffffff; }
+        .pagination-btn.disabled { background: var(--border); color: var(--text-light); cursor: not-allowed; }
+        .pagination-btn.active { background: var(--primary); color: #ffffff; }
+        .pagination-btn.arrow { font-size: 16px; width: 40px; }
 
-        .pagination-btn.disabled {
-            background: var(--border);
-            color: var(--text-light);
-            cursor: not-allowed;
-        }
-
-        .pagination-btn.active {
-            background: var(--primary);
-            color: #ffffff;
-        }
-
-        .pagination-btn.arrow {
-            font-size: 16px;
-            width: 40px;
-        }
-
-        .empty-state {
+        .empty-state { /* empty_state_styles */
             text-align: center;
             padding: 40px;
             color: var(--text-light);
         }
 
-        .empty-state-icon {
+        .empty-state-icon { /* empty_state_icon_styles */
             font-size: 48px;
             margin-bottom: 15px;
             opacity: 0.5;
         }
 
-        footer {
+        footer { /* footer_styles */
             background: var(--primary);
             color: #ffffff;
             text-align: center;
@@ -493,199 +283,82 @@
             margin-top: auto;
         }
 
-        @media (min-width: 1024px) {
-            .sidebar {
-                left: 0;
-            }
-
-            .main-content {
-                margin-left: 250px;
-            }
-
-            .sidebar-overlay {
-                display: none;
-            }
-
-            .menu-toggle {
-                display: none;
-            }
+        @media (max-width: 1024px) { /* media_query_1024 */
+            .section-header { flex-direction: column; align-items: flex-start; }
+            .search-bar { width: 100%; }
+            .search-bar input { width: 100%; }
+            .users-table { display: block; overflow-x: auto; white-space: nowrap; }
         }
 
-        @media (max-width: 1024px) {
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .search-bar {
-                width: 100%;
-            }
-
-            .search-bar input {
-                width: 100%;
-            }
-
-            .users-table {
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
+        @media (max-width: 768px) { /* media_query_768 */
+            .main-content { padding: 20px 15px; }
+            .users-section { padding: 15px; }
+            .section-title { font-size: 16px; }
+            .users-table th, .users-table td { padding: 8px; font-size: 12px; }
+            .action-buttons { flex-direction: column; gap: 5px; }
+            .action-btn { width: 100%; justify-content: center; }
         }
 
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 20px 15px;
-            }
-
-            .users-section {
-                padding: 15px;
-            }
-
-            .section-title {
-                font-size: 16px;
-            }
-
-            .users-table th, .users-table td {
-                padding: 8px;
-                font-size: 12px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-                gap: 5px;
-            }
-
-            .action-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header {
-                padding: 0 15px;
-            }
-
-            .logo-text {
-                font-size: 16px;
-            }
-
-            .search-bar input {
-                font-size: 12px;
-                padding: 6px 6px 6px 28px;
-            }
-
-            .reset-btn {
-                padding: 6px 10px;
-                font-size: 10px;
-            }
-
-            .pagination-btn {
-                width: 28px;
-                height: 28px;
-                font-size: 12px;
-            }
-
-            .pagination-btn.arrow {
-                width: 34px;
-            }
-
-            footer {
-                font-size: 12px;
-                padding: 10px 15px;
-            }
+        @media (max-width: 480px) { /* media_query_480 */
+            .header { padding: 0 15px; }
+            .logo-text { font-size: 16px; }
+            .search-bar input { font-size: 12px; padding: 6px 6px 6px 28px; }
+            .reset-btn { padding: 6px 10px; font-size: 10px; }
+            .pagination-btn { width: 28px; height: 28px; font-size: 12px; }
+            .pagination-btn.arrow { width: 34px; }
+            footer { font-size: 12px; padding: 10px 15px; }
         }
     </style>
 </head>
-<body>
-    <div class="header">
-        <button class="menu-toggle" aria-label="Toggle Sidebar" aria-expanded="false" onclick="toggleSidebar()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <div class="logo-container">
-            <img src="LOGO.JPG" alt="mng data logo" style="width: 40px; height: 40px; border-radius: 50px;">
-            <div class="logo-text">MNG DATA API</div>
+<body> <!-- body_element -->
+    <div class="header" id="header_container"> <!-- header_container -->
+        <div class="logo-container" id="logo_container"> <!-- logo_container -->
+            <img src="LOGO.JPG" alt="mng data logo" style="width: 40px; height: 40px; border-radius: 50px;" id="logo_image"> <!-- logo_image -->
+            <div class="logo-text" id="logo_text">MNG DATA API</div> <!-- logo_text -->
+        </div>
+        <div class="header-buttons" id="header_buttons_container"> <!-- header_buttons_container -->
+            <button class="header-btn" id="back_button" name="back_button" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button> <!-- back_button -->
+            <button class="header-btn" id="logout_button" name="logout_button" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button> <!-- logout_button -->
         </div>
     </div>
 
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-    <div class="sidebar" id="sidebar">
-        <nav class="nav-menu">
-            <div class="dropdown">
-                <button class="nav-item"><i class="fas fa-tachometer-alt"></i> <a href="admin.html">Dashboard</a></button>
-                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                    <span><i class="fas fa-users"></i> Users</span>
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-                <div class="dropdown-menu active">
-                    <button class="nav-item active"><i class="fas fa-list"></i> <a href="all-users.html">All Users</a></button>
-                </div>
+    <main class="main-content" id="main_content"> <!-- main_content -->
+        <div class="users-section" id="users_section"> <!-- users_section -->
+            <div class="section-header" id="section_header"> <!-- section_header -->
+                <h2 class="section-title" id="section_title">All Users</h2> <!-- section_title -->
+                <form id="search_form" method="POST" action="process_search.php"> <!-- search_form -->
+                    <div class="search-bar" id="search_bar"> <!-- search_bar -->
+                        <i class="fas fa-search" id="search_icon"></i> <!-- search_icon -->
+                        <input type="text" id="search_input" name="search_term" placeholder="Search by name or email..."> <!-- search_input -->
+                        <button class="reset-btn" id="reset_button" name="reset_search" type="submit">Reset</button> <!-- reset_button -->
+                    </div>
+                </form>
             </div>
-            <div class="dropdown">
-                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                    <span><i class="fas fa-credit-card"></i> Transactions</span>
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-                <div class="dropdown-menu">
-                    <button class="nav-item"><i class="fas fa-list"></i> <a href="all-transactions.html">All Transactions</a></button>
-                    <button class="nav-item"><i class="fas fa-money-bill"></i> <a href="all-funding.html">All Funding</a></button>
-                    <button class="nav-item"><i class="fas fa-sync"></i> <a href="realtime-responses.html">Real-Time Responses</a></button>
-                    <button class="nav-item"><i class="fas fa-clock"></i> <a href="processing-order.html">Processing Order</a></button>
-                </div>
-            </div>
-            <div class="dropdown">
-                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                    <span><i class="fas fa-cog"></i> Settings</span>
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-                <div class="dropdown-menu">
-                    <button class="nav-item"><i class="fas fa-gem"></i> <a href="plans.html">Plans</a></button>
-                    <button class="nav-item"><i class="fas fa-plug"></i> <a href="apis.html">APIs</a></button>
-                    <button class="nav-item"><i class="fas fa-network-wired"></i> <a href="changing-port.html">Changing Port</a></button>
-                    <button class="nav-item"><i class="fas fa-shield-alt"></i> <a href="security.html">Security</a></button>
-                </div>
-            </div>
-            <button class="nav-item"><i class="fas fa-chart-line"></i> <a href="chart.html">Chart</a></button>
-        </nav>
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-    </div>
-
-    <main class="main-content">
-        <div class="users-section">
-            <div class="section-header">
-                <h2 class="section-title">All Users</h2>
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search by name or email...">
-                    <button class="reset-btn" id="resetBtn">Reset</button>
-                </div>
-            </div>
-            <table class="users-table">
-                <thead>
+            <table class="users-table" id="users_table"> <!-- users_table -->
+                <thead id="table_header"> <!-- table_header -->
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Balance</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th id="id_column">ID</th> <!-- id_column -->
+                        <th id="name_column">Name</th> <!-- name_column -->
+                        <th id="email_column">Email</th> <!-- email_column -->
+                        <th id="balance_column">Balance</th> <!-- balance_column -->
+                        <th id="status_column">Status</th> <!-- status_column -->
+                        <th id="actions_column">Actions</th> <!-- actions_column -->
                     </tr>
                 </thead>
-                <tbody id="usersTableBody"></tbody>
+                <tbody id="users_table_body"></tbody> <!-- users_table_body -->
             </table>
-            <div class="pagination" id="pagination"></div>
+            <div class="pagination" id="pagination_container"> <!-- pagination_container -->
+                <!-- Pagination buttons will be dynamically inserted here -->
+            </div>
         </div>
     </main>
 
-    <footer>
-        © 2025 MNG DATA API. All rights reserved.
+    <footer id="footer_element"> <!-- footer_element -->
+        <div id="footer_text">© 2025 MNG DATA API. All rights reserved.</div> <!-- footer_text -->
     </footer>
 
-    <script>
-        let users = [
+    <script> /* main_script */
+        let users = [ /* users_data */
             { id: 'USR001', name: 'Web Learner', email: 'web@gmail.com', balance: 125450, status: 'active' },
             { id: 'USR002', name: 'shettima NSCDC', email: 'nscdc@gmail.com', balance: 75000, status: 'active' },
             { id: 'USR003', name: 'saifullah khamisu encrypted', email: 'encrypted@gmail.com', balance: 32000, status: 'disabled' },
@@ -698,15 +371,15 @@
             { id: 'USR010', name: 'Web Learner', email: 'web@gmail.com', balance: 54000, status: 'active' }
         ];
 
-        const ITEMS_PER_PAGE = 10;
-        let currentPage = 1;
-        let filteredUsers = [...users];
+        const ITEMS_PER_PAGE = 10; /* items_per_page */
+        let currentPage = 1; /* current_page */
+        let filteredUsers = [...users]; /* filtered_users */
 
-        function formatCurrency(amount) {
+        function formatCurrency(amount) { /* format_currency_function */
             return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(amount);
         }
 
-        function showAlert(message, type = 'success') {
+        function showAlert(message, type = 'success') { /* show_alert_function */
             Swal.fire({
                 title: type === 'success' ? 'Success!' : 'Error!',
                 text: message,
@@ -715,7 +388,7 @@
             });
         }
 
-        function deleteUser(userId, userName) {
+        function deleteUser(userId, userName) { /* delete_user_function */
             Swal.fire({
                 title: 'Are you sure?',
                 text: `You are about to permanently delete ${userName} (${userId}). This action cannot be undone.`,
@@ -735,7 +408,7 @@
             });
         }
 
-        function toggleUserStatus(userId, userName, currentStatus) {
+        function toggleUserStatus(userId, userName, currentStatus) { /* toggle_user_status_function */
             const newStatus = currentStatus === 'active' ? 'disabled' : 'active';
             const actionText = newStatus === 'disabled' ? 'disable' : 'enable';
             Swal.fire({
@@ -760,12 +433,12 @@
             });
         }
 
-        function renderUsers(page) {
+        function renderUsers(page) { /* render_users_function */
             const start = (page - 1) * ITEMS_PER_PAGE;
             const end = start + ITEMS_PER_PAGE;
             const paginatedUsers = filteredUsers.slice(start, end);
 
-            const tbody = document.getElementById('usersTableBody');
+            const tbody = document.getElementById('users_table_body');
             tbody.innerHTML = paginatedUsers.length ? paginatedUsers.map(user => `
                 <tr>
                     <td>${user.id}</td>
@@ -774,12 +447,12 @@
                     <td>${formatCurrency(user.balance)}</td>
                     <td class="status-${user.status}">${user.status.charAt(0).toUpperCase() + user.status.slice(1)}</td>
                     <td>
-                        <div class="action-buttons">
-                            <button class="action-btn delete" onclick="deleteUser('${user.id}', '${user.name}')">
+                        <div class="action-buttons" id="action_buttons_${user.id}">
+                            <button class="action-btn delete" id="delete_button_${user.id}" name="delete_user" onclick="deleteUser('${user.id}', '${user.name}')">
                                 <i class="fas fa-trash"></i>
                                 <span class="tooltip">Delete</span>
                             </button>
-                            <button class="action-btn ${user.status === 'active' ? 'disable' : 'enable'}" onclick="toggleUserStatus('${user.id}', '${user.name}', '${user.status}')">
+                            <button class="action-btn ${user.status === 'active' ? 'disable' : 'enable'}" id="toggle_status_button_${user.id}" name="toggle_status" onclick="toggleUserStatus('${user.id}', '${user.name}', '${user.status}')">
                                 <i class="fas ${user.status === 'active' ? 'fa-ban' : 'fa-check'}"></i>
                                 <span class="tooltip">${user.status === 'active' ? 'Disable' : 'Enable'}</span>
                             </button>
@@ -788,24 +461,25 @@
                 </tr>
             `).join('') : `
                 <tr>
-                    <td colspan="6" class="empty-state">
-                        <div class="empty-state-icon"><i class="fas fa-users"></i></div>
-                        <h3>No Users Found</h3>
-                        <p>No users match your search criteria.</p>
+                    <td colspan="6" class="empty-state" id="empty_state">
+                        <div class="empty-state-icon" id="empty_state_icon"><i class="fas fa-users"></i></div>
+                        <h3 id="empty_state_title">No Users Found</h3>
+                        <p id="empty_state_message">No users match your search criteria.</p>
                     </td>
                 </tr>
             `;
         }
 
-        function renderPagination() {
+        function renderPagination() { /* render_pagination_function */
             const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
-            const pagination = document.getElementById('pagination');
+            const pagination = document.getElementById('pagination_container');
             pagination.innerHTML = '';
 
             if (totalPages <= 1) return;
 
             const prevBtn = document.createElement('button');
             prevBtn.className = `pagination-btn arrow ${currentPage === 1 ? 'disabled' : ''}`;
+            prevBtn.id = 'prev_page_button';
             prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
             prevBtn.onclick = () => {
                 if (currentPage > 1) {
@@ -819,6 +493,7 @@
             for (let i = 1; i <= totalPages; i++) {
                 const pageBtn = document.createElement('button');
                 pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.id = `page_button_${i}`;
                 pageBtn.textContent = i;
                 pageBtn.onclick = () => {
                     currentPage = i;
@@ -830,6 +505,7 @@
 
             const nextBtn = document.createElement('button');
             nextBtn.className = `pagination-btn arrow ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextBtn.id = 'next_page_button';
             nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
             nextBtn.onclick = () => {
                 if (currentPage < totalPages) {
@@ -841,9 +517,9 @@
             pagination.appendChild(nextBtn);
         }
 
-        function filterUsers() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const resetBtn = document.getElementById('resetBtn');
+        function filterUsers() { /* filter_users_function */
+            const searchTerm = document.getElementById('search_input').value.toLowerCase();
+            const resetBtn = document.getElementById('reset_button');
             resetBtn.style.display = searchTerm ? 'inline-block' : 'none';
 
             filteredUsers = users.filter(user =>
@@ -855,53 +531,20 @@
             renderPagination();
         }
 
-        function resetSearch() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('resetBtn').style.display = 'none';
+        function resetSearch() { /* reset_search_function */
+            document.getElementById('search_input').value = '';
+            document.getElementById('reset_button').style.display = 'none';
             filteredUsers = [...users];
             currentPage = 1;
             renderUsers(currentPage);
             renderPagination();
         }
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            const toggleBtn = document.querySelector('.menu-toggle');
-            
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-            const isExpanded = sidebar.classList.contains('active');
-            toggleBtn.setAttribute('aria-expanded', isExpanded);
+        function goBack() { /* go_back_function */
+            window.history.back();
         }
 
-        function toggleDropdown(element) {
-            const dropdownMenu = element.nextElementSibling;
-            const isActive = dropdownMenu.classList.contains('active');
-            
-            document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('active'));
-            
-            if (!isActive) {
-                dropdownMenu.classList.add('active');
-            }
-        }
-
-        function navigateTo(event) {
-            const navItem = event.currentTarget;
-            const link = navItem.querySelector('a');
-            if (link) {
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-                navItem.classList.add('active');
-                
-                if (window.innerWidth <= 768) {
-                    toggleSidebar();
-                }
-                
-                window.location.href = link.href;
-            }
-        }
-
-        function logout() {
+        function logout() { /* logout_function */
             Swal.fire({
                 title: 'Are you sure?',
                 text: 'You will be logged out of your account.',
@@ -921,36 +564,11 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() { /* dom_content_loaded */
             renderUsers(currentPage);
             renderPagination();
-            document.getElementById('searchInput').addEventListener('input', filterUsers);
-            document.getElementById('resetBtn').addEventListener('click', resetSearch);
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', navigateTo);
-            });
-        });
-
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const menuToggle = document.querySelector('.menu-toggle');
-            
-            if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && window.innerWidth <= 768) {
-                if (sidebar.classList.contains('active')) {
-                    toggleSidebar();
-                }
-                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('active'));
-            }
-        });
-
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.querySelector('.sidebar-overlay');
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('active'));
-            }
+            document.getElementById('search_input').addEventListener('input', filterUsers);
+            document.getElementById('reset_button').addEventListener('click', resetSearch);
         });
     </script>
 </body>

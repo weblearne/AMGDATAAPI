@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNG DATA API - ATPAY PLANS</title>
+    <title>MNG DATA API - MNG DATA PLANS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -27,6 +27,7 @@
             height: 60px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             position: fixed;
             top: 0;
             left: 0;
@@ -46,153 +47,47 @@
             color: #1e3a8a;
         }
 
-        .menu-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            margin-right: 15px;
-            border-radius: 6px;
-            transition: background 0.3s ease;
-        }
-
-        .menu-toggle:hover {
-            background: #f3f4f6;
-        }
-
-        .menu-toggle span {
-            display: block;
-            width: 22px;
-            height: 2px;
-            background: #374151;
-            margin: 5px 0;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            border-radius: 1px;
-        }
-
-        .menu-toggle.active span:nth-child(1) {
-            transform: translateY(7px) rotate(45deg);
-        }
-
-        .menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .menu-toggle.active span:nth-child(3) {
-            transform: translateY(-7px) rotate(-45deg);
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 60px;
-            left: -250px;
-            width: 250px;
-            height: calc(100vh - 60px);
-            background: #1e3a8a;
-            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 999;
-            overflow-y: auto;
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .sidebar-overlay {
-            position: fixed;
-            top: 60px;
-            left: 0;
-            width: 100%;
-            height: calc(100vh - 60px);
-            background: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 998;
-        }
-
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .nav-menu {
-            padding: 20px 0;
+        .header-buttons {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .nav-item {
+        .back-btn, .logout-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            color: #ffffff;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            border-right: 3px solid transparent;
-            background: none;
-            border: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
+            gap: 6px;
         }
 
-        .nav-item:hover {
-            background: #2563eb;
-            transform: scale(1.02);
+        .back-btn {
+            background: #f3f4f6;
+            color: #1e3a8a;
         }
 
-        .nav-item.active {
-            background: #2563eb;
-            border-right-color: #3b82f6;
-        }
-
-        .nav-item i {
-            font-size: 18px;
-            width: 24px;
-            text-align: center;
-        }
-
-        .nav-item a {
-            color: inherit;
-            text-decoration: none;
-            display: block;
-            width: 100%;
+        .back-btn:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
         }
 
         .logout-btn {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            padding: 12px;
-            background: linear-gradient(135deg, #ef4444, #f87171);
+            background: #1e3a8a;
             color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
 
         .logout-btn:hover {
+            background: #2563eb;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         .main-content {
             margin-top: 60px;
             padding: 30px;
-            transition: margin-left 0.3s ease;
         }
 
         .plans-section {
@@ -256,24 +151,6 @@
             overflow-x: auto;
         }
 
-        @media (min-width: 1024px) {
-            .sidebar {
-                left: 0;
-            }
-
-            .main-content {
-                margin-left: 250px;
-            }
-
-            .sidebar-overlay {
-                display: none;
-            }
-
-            .menu-toggle {
-                display: none;
-            }
-        }
-
         @media (max-width: 768px) {
             .main-content {
                 padding: 20px 15px;
@@ -310,34 +187,24 @@
             .plans-table td {
                 padding: 8px;
             }
+
+            .back-btn, .logout-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <button class="menu-toggle" aria-label="Toggle Sidebar" aria-expanded="false" onclick="toggleSidebar()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
         <div class="logo-container">
             <img src="LOGO.JPG" alt="mng data logo" style="width: 40px; height: 40px; border-radius: 50px;">
             <div class="logo-text">MNG DATA API</div>
         </div>
-    </div>
-
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-    <div class="sidebar" id="sidebar">
-        <nav class="nav-menu">
-            <button class="nav-item"><i class="fas fa-tachometer-alt"></i> <a href="user.html">Dashboard</a></button>
-            <button class="nav-item active"><i class="fas fa-star"></i> <a href="plans.html">Plans</a></button>
-            <button class="nav-item"><i class="fas fa-sliders-h"></i> <a href="settings.html">Settings</a></button>
-            <button class="nav-item"><i class="fas fa-credit-card"></i> <a href="transactions.html">Transactions</a></button>
-            <button class="nav-item"><i class="fas fa-book"></i> <a href="documentation.html">Documentation</a></button>
-            <button class="nav-item"><i class="fas fa-user"></i> <a href="Profile.html">Profile</a></button>
-        </nav>
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        <div class="header-buttons">
+            <button id="backButton" name="backButton" class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+            <button id="logoutButton" name="logoutButton" class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
     </div>
 
     <main class="main-content">
@@ -362,7 +229,6 @@
     </main>
 
     <script>
-        // Static plans data with corrected field
         const plans = [
             { planId: 83, network: "MTN", type: "GIFTING", amount: 720, size: "1GB", validity: "1 Day", enabled: true },
             { planId: 84, network: "MTN", type: "GIFTING", amount: 2520, size: "3.2GB", validity: "7 Days", enabled: true },
@@ -390,30 +256,8 @@
             });
         }
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            const toggleBtn = document.querySelector('.menu-toggle');
-            
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-            const isExpanded = sidebar.classList.contains('active');
-            toggleBtn.setAttribute('aria-expanded', isExpanded);
-        }
-
-        function navigateTo(event) {
-            const navItem = event.currentTarget;
-            const link = navItem.querySelector('a');
-            if (link) {
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-                navItem.classList.add('active');
-                
-                if (window.innerWidth <= 768) {
-                    toggleSidebar();
-                }
-                
-                window.location.href = link.href;
-            }
+        function goBack() {
+            window.history.back();
         }
 
         function logout() {
@@ -481,29 +325,6 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             loadPlans();
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', navigateTo);
-            });
-        });
-
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const menuToggle = document.querySelector('.menu-toggle');
-            
-            if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && window.innerWidth <= 768) {
-                if (sidebar.classList.contains('active')) {
-                    toggleSidebar();
-                }
-            }
-        });
-
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.querySelector('.sidebar-overlay');
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-            }
         });
     </script>
 </body>

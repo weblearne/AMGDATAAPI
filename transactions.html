@@ -27,6 +27,7 @@
             height: 70px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             position: fixed;
             top: 0;
             left: 0;
@@ -46,125 +47,47 @@
             color: #1e3a8a;
         }
 
-        .menu-toggle {
-            background: none;
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .back-btn, .logout-btn {
+            padding: 8px 16px;
             border: none;
-            cursor: pointer;
-            padding: 8px;
-            margin-right: 15px;
-            border-radius: 6px;
-            transition: background 0.2s ease;
-        }
-
-        .menu-toggle:hover {
-            background: #f3f4f6;
-        }
-
-        .menu-toggle span {
-            display: block;
-            width: 20px;
-            height: 2px;
-            background: #374151;
-            margin: 4px 0;
-            transition: 0.2s;
-            border-radius: 1px;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 70px;
-            left: -280px;
-            width: 280px;
-            height: calc(100vh - 70px);
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            transition: transform 0.2s ease;
-            z-index: 999;
-            overflow-y: auto;
-            will-change: transform;
-        }
-
-        .sidebar.active {
-            transform: translateX(280px);
-        }
-
-        .sidebar-overlay {
-            position: fixed;
-            top: 70px;
-            left: 0;
-            width: 100%;
-            height: calc(100vh - 70px);
-            background: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s ease;
-            z-index: 998;
-        }
-
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .nav-menu {
-            padding: 20px 0;
-        }
-
-        .nav-item {
-            display: block;
-            padding: 15px 25px;
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            transition: all 0.2s ease;
-            border-left: 3px solid transparent;
-            background: none;
-            border: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
+            border-radius: 8px;
             font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-left-color: #60a5fa;
-            color: white;
+        .back-btn {
+            background: #f3f4f6;
+            color: #1e3a8a;
         }
 
-        .nav-item.active {
-            background: rgba(255, 255, 255, 0.15);
-            border-left-color: #93c5fd;
-            color: white;
-        }
-
-        .nav-item i {
-            margin-right: 10px;
-            width: 16px;
+        .back-btn:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
         }
 
         .logout-btn {
-            position: absolute;
-            bottom: 20px;
-            left: 25px;
-            right: 25px;
-            padding: 12px;
-            background: rgba(239, 68, 68, 0.9);
+            background: #1e3a8a;
             color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background 0.2s ease;
         }
 
         .logout-btn:hover {
-            background: rgba(239, 68, 68, 1);
+            background: #2563eb;
+            transform: translateY(-2px);
         }
 
         .main-content {
             margin-top: 70px;
             padding: 30px;
-            transition: margin-left 0.2s ease;
         }
 
         .transactions-section {
@@ -312,27 +235,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Desktop styles */
-        @media (min-width: 1024px) {
-            .sidebar {
-                left: 0;
-                transform: none;
-            }
-
-            .main-content {
-                margin-left: 280px;
-            }
-
-            .sidebar-overlay {
-                display: none;
-            }
-
-            .menu-toggle {
-                display: none;
-            }
-        }
-
-        /* Tablet styles */
         @media (max-width: 768px) {
             .main-content {
                 padding: 20px 15px;
@@ -356,7 +258,6 @@
             }
         }
 
-        /* Mobile styles */
         @media (max-width: 480px) {
             .header {
                 padding: 0 15px;
@@ -386,11 +287,13 @@
             .transactions-section {
                 padding: 15px 10px;
             }
+
+            .back-btn, .logout-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
         }
 
-        /* Performance optimizations */
-        .sidebar,
-        .sidebar-overlay,
         .transactions-table tbody tr {
             transform: translateZ(0);
         }
@@ -398,37 +301,14 @@
 </head>
 <body>
     <div class="header">
-        <button class="menu-toggle" aria-label="Toggle Sidebar" aria-expanded="false" onclick="toggleSidebar()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
         <div class="logo-container">
             <img src="LOGO.JPG" alt="mng data logo" style="width: 50px; height: 50px; border-radius: 50px;">
             <div class="logo-text">MNG DATA API</div>
         </div>
-    </div>
-
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-    
-    <div class="sidebar" id="sidebar">
-        <nav class="nav-menu">
-            <button class="nav-item" onclick="navigateTo('dashboard')">
-                <i class="fas fa-tachometer-alt"></i> <a href="user.html" style="color: #ffffff; text-decoration: none;">Dashboard</a> 
-            </button>
-            <button class="nav-item"><i class="fas fa-star"></i> <a href="plans.html" style="text-decoration: none; color:#ffffff;">Plans</a></button>
-            <button class="nav-item"><i class="fas fa-credit-card"></i> <a href="transactions.html"  style="text-decoration: none; color: #ffffff;">Transactions</a></button>
-            <button class="nav-item" onclick="navigateTo('settings')">
-                <i class="fas fa-cog"></i> Settings
-            </button>
-            <button class="nav-item" onclick="navigateTo('documentation')">
-                <i class="fas fa-book"></i> Documentation
-            </button>
-            <button class="nav-item"><i class="fas fa-user"></i> <a href="Profile.html" style="text-decoration: none; color: #ffffff;">Profile</a></button>
-        </nav>
-        <button class="logout-btn" onclick="logout()">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
+        <div class="header-buttons">
+            <button id="backButton" name="backButton" class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+            <!-- <button id="logoutButton" name="logoutButton" class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button> -->
+        </div>
     </div>
 
     <main class="main-content">
@@ -464,7 +344,6 @@
     </main>
 
     <script>
-        // Optimized transactions data
         const transactions = [
             {
                 id: 'TXN001',
@@ -530,7 +409,6 @@
 
         let isLoading = false;
 
-        // Optimized alert function with reduced animations
         function showAlert(message, type = 'success') {
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
@@ -547,32 +425,8 @@
             }
         }
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            const toggleBtn = document.querySelector('.menu-toggle');
-            
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-            toggleBtn.setAttribute('aria-expanded', sidebar.classList.contains('active'));
-        }
-
-        function navigateTo(page) {
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            
-            if (window.innerWidth <= 768) {
-                toggleSidebar();
-            }
-            
-            showAlert(`Navigating to ${page} page...`, 'info');
-            
-            // Simulate navigation delay
-            setTimeout(() => {
-                // Uncomment for actual navigation
-                // window.location.href = `${page}.html`;
-            }, 1000);
+        function goBack() {
+            window.history.back();
         }
 
         function logout() {
@@ -633,7 +487,6 @@
             const transactionsBody = document.getElementById('transactionsBody');
             const enabledTransactions = transactions.filter(t => t.enabled);
 
-            // Simulate loading delay
             setTimeout(() => {
                 if (enabledTransactions.length === 0) {
                     transactionsBody.innerHTML = `
@@ -662,33 +515,11 @@
             }, 800);
         }
 
-        // Event listeners with passive option for better performance
         document.addEventListener('DOMContentLoaded', function() {
             loadTransactions();
             showAlert('Welcome to your Transactions page!', 'success');
         });
 
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const menuToggle = document.querySelector('.menu-toggle');
-            
-            if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && window.innerWidth <= 768) {
-                if (sidebar.classList.contains('active')) {
-                    toggleSidebar();
-                }
-            }
-        }, { passive: true });
-
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.querySelector('.sidebar-overlay');
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-            }
-        }, { passive: true });
-
-        // Prevent multiple rapid clicks
         let clickTimeout;
         function debounceClick(fn, delay = 300) {
             return function(...args) {
